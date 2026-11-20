@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Six Seven · Pizzería en Buceo</title>
+<meta name="description" content="Carta digital de Pizzería Six Seven, Buceo, Montevideo.">
+<meta name="theme-color" content="#120d0b">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.js"></script>
+<style>
+:root{
+  --bg:#120d0b; --bg2:#181210; --panel:#1f1714; --line:#33261f;
+  --text:#f6eee7; --muted:#a8978a; --red:#e63b2e; --red2:#ff5a47;
+  --wood1:#8a5530; --wood2:#4a2a16;
+  --display:"Archivo",system-ui,sans-serif; --body:"Inter",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+  --r:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--text);font:400 16px/1.55 var(--body);overflow-x:hidden}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--red2);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+.mono{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--red);color:#fff;font-weight:600;padding:12px 20px;border-radius:999px;transition:background .2s}
+.btn:hover{background:var(--red2)}
+.btn.ghost{background:transparent;border:1px solid var(--line)}
+.btn.ghost:hover{border-color:var(--muted)}
+.chip{display:inline-block;font:500 12px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:7px 10px;border:1px solid var(--line);border-radius:999px;color:var(--muted)}
+.chip.alert{border-color:#7a2a22;color:#ff8f80}
+
+/* demo bar + header */
+.demo{background:var(--red);color:#fff;text-align:center;font:500 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;padding:8px 16px}
+header{position:sticky;top:0;z-index:30;background:rgba(18,13,11,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;gap:20px;height:64px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;margin-right:auto}
+.logo-mark{width:38px;height:38px;border-radius:50%;background:var(--red);display:grid;place-items:center;font:900 15px/1 var(--display);color:#fff}
+.logo b{font:800 18px/1 var(--display);display:block}
+.logo small{font:500 10px/1.4 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.links{display:flex;gap:22px;font-size:14px;color:var(--muted)}
+.links a{text-decoration:none}.links a:hover{color:var(--text)}
+.cart-btn{position:relative;width:42px;height:42px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center}
+.cart-btn svg{width:20px;height:20px}
+.badge{position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;padding:0 5px;border-radius:999px;background:var(--red);font:600 11px/20px var(--body);text-align:center}
+.badge[data-n="0"]{display:none}
+@media (max-width:760px){.links,.nav .btn{display:none}}
+
+/* hero carousel */
+.hero{position:relative;padding:40px 0 56px;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:-20% -10% auto auto;width:70vw;height:70vw;max-width:900px;max-height:900px;background:radial-gradient(circle,rgba(230,59,46,.16),transparent 60%);pointer-events:none}
+.hero-grid{display:grid;grid-template-columns:1fr 1.1fr;align-items:center;gap:32px;min-height:520px}
+.hero-text{position:relative;z-index:2}
+.hero-text .mono{margin-bottom:18px}
+.hero h1{font:900 clamp(44px,7vw,86px)/.95 var(--display);letter-spacing:-.03em;margin-bottom:18px}
+.hero p.desc{color:var(--muted);max-width:42ch;margin-bottom:18px}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:26px}
+.buy{display:flex;align-items:center;gap:18px}
+.price{font:800 32px/1 var(--display)}
+.price small{font:500 12px var(--mono);color:var(--muted);letter-spacing:.08em;margin-left:6px}
+.stage{position:relative;aspect-ratio:1;width:100%;max-width:560px;justify-self:center;touch-action:pan-y;user-select:none}
+.board{position:absolute;inset:4%;border-radius:50%;
+  background:repeating-radial-gradient(circle at 50% 50%,rgba(0,0,0,.0) 0 9px,rgba(0,0,0,.07) 10px 11px),radial-gradient(circle at 40% 35%,var(--wood1),var(--wood2) 75%);
+  box-shadow:0 40px 80px rgba(0,0,0,.6),inset 0 0 0 6px rgba(0,0,0,.18)}
+.pizza{position:absolute;inset:9%;cursor:pointer}
+.pizza .spin{width:100%;height:100%;animation:spin 70s linear infinite}
+.pizza svg{width:100%;height:100%;display:block;filter:drop-shadow(0 18px 24px rgba(0,0,0,.55))}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.pizza .spin{animation:none}}
+.tap-hint{position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);white-space:nowrap}
+.ctrl{display:flex;align-items:center;gap:14px;margin-top:34px}
+.arrow{width:46px;height:46px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center}
+.arrow:hover{border-color:var(--muted)}
+.dots{display:flex;gap:8px}
+.dot{width:8px;height:8px;border-radius:999px;background:var(--line);transition:width .3s,background .3s}
+.dot.on{width:26px;background:var(--red)}
+@media (max-width:860px){
+  .hero{padding-top:20px}
+  .hero-grid{grid-template-columns:1fr;min-height:0;gap:8px}
+  .stage{order:-1;max-width:420px}
+  .hero-text{text-align:left}
+}
+
+/* sections */
+section{padding:88px 0;border-top:1px solid var(--line)}
+.sec-head{margin-bottom:40px}
+.sec-head h2{font:900 clamp(34px,5vw,58px)/1 var(--display);letter-spacing:-.025em;margin-top:12px}
+.sec-head h2 em{font-style:normal;color:var(--red)}
+.horno{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}
+.horno p{color:var(--muted);max-width:48ch;margin-top:18px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:36px}
+.stat b{display:block;font:900 44px/1 var(--display)}
+.stat span{font-size:13px;color:var(--muted)}
+.ember{position:relative;aspect-ratio:1;max-width:380px;width:100%;justify-self:center;border-radius:50%;
+  background:radial-gradient(circle at 50% 60%,#ffb347 0,#ff5a1f 18%,#b0200f 38%,rgba(80,10,5,.35) 58%,transparent 70%);filter:blur(2px)}
+@media (max-width:760px){.horno{grid-template-columns:1fr}.ember{order:-1;max-width:240px}}
+
+.tabs{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap}
+.tab{padding:10px 16px;border-radius:999px;border:1px solid var(--line);font-size:14px;color:var(--muted)}
+.tab[aria-selected="true"]{background:var(--text);color:var(--bg);border-color:var(--text)}
+.list{display:grid;grid-template-columns:repeat(2,1fr);gap:4px 40px}
+@media (max-width:760px){.list{grid-template-columns:1fr}}
+.item{display:grid;grid-template-columns:56px 1fr auto;gap:14px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
+.thumb{width:56px;height:56px;border-radius:50%;overflow:hidden;background:var(--panel);display:grid;place-items:center;font:800 18px var(--display);color:var(--muted)}
+.thumb svg{width:100%;height:100%}
+.item h3{font:800 17px/1.2 var(--display)}
+.item p{font-size:13px;color:var(--muted);line-height:1.4}
+.item .right{text-align:right}
+.item .right b{display:block;font:600 15px var(--body);margin-bottom:6px}
+.add{width:32px;height:32px;border-radius:50%;background:var(--panel);border:1px solid var(--line);font-size:18px;line-height:1}
+.add:hover{background:var(--red);border-color:var(--red)}
+
+.reserva{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+.reserva p{color:var(--muted);margin-top:16px}
+form{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:24px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+label{display:grid;gap:6px;font-size:13px;color:var(--muted)}
+label.full{grid-column:1/-1}
+input,select{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px;color-scheme:dark;width:100%}
+form .btn{grid-column:1/-1;justify-content:center}
+@media (max-width:760px){.reserva{grid-template-columns:1fr}}
+
+footer{border-top:1px solid var(--line);padding:40px 0 60px;color:var(--muted);font-size:14px}
+.foot{display:flex;flex-wrap:wrap;gap:24px 48px;justify-content:space-between}
+.foot b{color:var(--text);display:block;margin-bottom:4px}
+
+/* drawers */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:40;opacity:0;pointer-events:none;transition:opacity .25s}
+.scrim.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;z-index:50;top:0;right:0;height:100%;width:min(440px,100%);background:var(--bg2);border-left:1px solid var(--line);
+  transform:translateX(100%);display:flex;flex-direction:column;visibility:hidden}
+.drawer.on{visibility:visible}
+@media (max-width:600px){.drawer{top:auto;bottom:0;height:auto;max-height:90dvh;width:100%;border-left:0;border-top:1px solid var(--line);border-radius:20px 20px 0 0;transform:translateY(100%)}}
+.d-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--line)}
+.d-body{padding:22px;overflow:auto;flex:1}
+.d-foot{padding:18px 22px;border-top:1px solid var(--line)}
+.d-foot .btn{width:100%;justify-content:center}
+.x{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);font-size:18px}
+.d-pizza{width:150px;height:150px;margin:0 auto 16px}
+.d-body h3{font:900 30px/1 var(--display);margin-bottom:8px}
+.d-body > p{color:var(--muted);font-size:14px;margin-bottom:20px}
+.grp{margin-bottom:20px}
+.grp .mono{display:block;margin-bottom:10px;font-size:11px}
+.grp .tags{margin:0}
+.sizes{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.size{border:1px solid var(--line);border-radius:12px;padding:12px;text-align:left}
+.size b{display:block;font-weight:600}
+.size span{font-size:13px;color:var(--muted)}
+.size[aria-checked="true"]{border-color:var(--red);background:rgba(230,59,46,.08)}
+.qty{display:flex;align-items:center;gap:14px}
+.qty button{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);font-size:18px}
+.qty b{min-width:20px;text-align:center}
+.line{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);font-size:15px}
+.line small{display:block;color:var(--muted);font-size:12px}
+.line .rm{color:var(--muted);font-size:12px;text-decoration:underline;margin-top:4px}
+.total{display:flex;justify-content:space-between;font:800 20px var(--display);margin:16px 0 4px}
+.empty{color:var(--muted);text-align:center;padding:40px 0}
+.alt{display:block;text-align:center;font-size:13px;color:var(--muted);margin-top:10px}
+
+.toast{position:fixed;left:50%;bottom:24px;z-index:60;transform:translateX(-50%);background:var(--text);color:var(--bg);font-weight:600;font-size:14px;padding:12px 18px;border-radius:999px;opacity:0;pointer-events:none;white-space:nowrap;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+
+/* reveal (only hidden when Motion loaded) */
+.js-motion .reveal{opacity:0}
+</style>
+</head>
+<body>
+
+<div class="demo">Demo · fotos y precios de ejemplo</div>
+
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="#top" aria-label="Six Seven, inicio">
+      <span class="logo-mark">67</span>
+      <span><b>Six Seven</b><small>Pizzería · Buceo</small></span>
+    </a>
+    <nav class="links" aria-label="Secciones">
+      <a href="#top">Destacadas</a><a href="#carta">Carta</a><a href="#casa">La casa</a><a href="#reservas">Reservas</a>
+    </nav>
+    <a class="btn" href="#reservas">Reservar</a>
+    <button class="cart-btn" id="openCart" aria-label="Ver pedido">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
+      <span class="badge" id="badge" data-n="0">0</span>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+  <div class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-text">
+        <div class="mono" id="hCount">01 / 08 · La carta</div>
+        <h1 id="hName">Muzzarella</h1>
+        <p class="desc" id="hDesc"></p>
+        <div class="tags" id="hTags"></div>
+        <div class="buy">
+          <div class="price" id="hPrice"></div>
+          <button class="btn" id="hOpen">Ver y pedir</button>
+        </div>
+        <div class="ctrl">
+          <button class="arrow" id="prev" aria-label="Pizza anterior"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
+          <div class="dots" id="dots"></div>
+          <button class="arrow" id="next" aria-label="Pizza siguiente"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button>
+        </div>
+      </div>
+      <div class="stage" id="stage">
+        <div class="board"></div>
+        <div class="pizza" id="pizza" role="button" tabindex="0" aria-label="Ver detalle de la pizza"><div class="spin" id="spin"></div></div>
+        <div class="mono tap-hint">Deslizá o tocá la pizza</div>
+      </div>
+    </div>
+  </div>
+
+  <section id="casa">
+    <div class="wrap horno">
+      <div>
+        <div class="mono reveal">La casa</div>
+        <div class="sec-head reveal" style="margin:0"><h2>Masa casera.<br><em>Recién salida</em> del horno.</h2></div>
+        <p class="reveal">Pizza al estilo uruguayo, de barrio, como tiene que ser. Pedí desde la mesa escaneando el QR, o desde tu casa por WhatsApp.</p>
+        <div class="stats">
+          <div class="stat reveal"><b data-count="4.8" data-dec="1">0</b><span>estrellas en Google</span></div>
+          <div class="stat reveal"><b data-count="8">0</b><span>pizzas en la carta</span></div>
+          <div class="stat reveal"><b data-count="11" data-suffix=":00">0</b><span>abrimos todos los días</span></div>
+        </div>
+      </div>
+      <div class="ember" id="ember" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <section id="carta">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="mono reveal">Carta completa</div>
+        <h2 class="reveal">Todo lo que sale <em>del horno</em></h2>
+      </div>
+      <div class="tabs" role="tablist" id="tabs"></div>
+      <div class="list" id="list"></div>
+    </div>
+  </section>
+
+  <section id="reservas">
+    <div class="wrap reserva">
+      <div>
+        <div class="mono reveal">Reservas</div>
+        <div class="sec-head reveal" style="margin:0"><h2>¿Mesa para <em>esta noche?</em></h2></div>
+        <p class="reveal">Elegí día, hora y cuántos son. Te confirmamos por WhatsApp.</p>
+      </div>
+      <form id="resForm" class="reveal">
+        <label>Día<input type="date" name="dia" required></label>
+        <label>Hora<select name="hora" required></select></label>
+        <label>Personas<select name="pers"></select></label>
+        <label>Nombre<input name="nombre" autocomplete="name" required placeholder="Tu nombre"></label>
+        <button class="btn" type="submit">Reservar por WhatsApp</button>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div><b>Pizzería Six Seven</b>Demóstenes 3479, Buceo · Montevideo</div>
+    <div><b>Teléfono</b><a href="tel:+59826240217">2624 0217</a></div>
+    <div><b>Cómo llegar</b><a href="https://www.google.com/maps/search/?api=1&query=Pizzer%C3%ADa+Six+Seven+Dem%C3%B3stenes+3479+Montevideo" target="_blank" rel="noopener">Abrir en Google Maps</a></div>
+  </div>
+</footer>
+
+<div class="scrim" id="scrim"></div>
+
+<aside class="drawer" id="detail" role="dialog" aria-modal="true" aria-labelledby="dName">
+  <div class="d-head"><span class="mono" id="dCount"></span><button class="x" data-close aria-label="Cerrar">✕</button></div>
+  <div class="d-body">
+    <div class="d-pizza" id="dPizza"></div>
+    <h3 id="dName"></h3>
+    <p id="dDesc"></p>
+    <div class="grp"><span class="mono">Ingredientes</span><div class="tags" id="dIng"></div></div>
+    <div class="grp"><span class="mono">Alérgenos</span><div class="tags" id="dAl"></div></div>
+    <div class="grp"><span class="mono">Tamaño</span><div class="sizes" id="dSizes" role="radiogroup"></div></div>
+    <div class="grp"><span class="mono">Cantidad</span><div class="qty"><button id="qMinus" aria-label="Menos">−</button><b id="qVal">1</b><button id="qPlus" aria-label="Más">+</button></div></div>
+  </div>
+  <div class="d-foot"><button class="btn" id="dAdd">Agregar al pedido</button></div>
+</aside>
+
+<aside class="drawer" id="cart" role="dialog" aria-modal="true" aria-labelledby="cTitle">
+  <div class="d-head"><span class="mono" id="cTitle">Tu pedido</span><button class="x" data-close aria-label="Cerrar">✕</button></div>
+  <div class="d-body" id="cBody"></div>
+  <div class="d-foot" id="cFoot">
+    <div class="total"><span>Total</span><span id="cTotal"></span></div>
+    <button class="btn" id="cSend">Enviar pedido por WhatsApp</button>
+    <span class="alt">o pedí por PedidosYa</span>
+  </div>
+</aside>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+// ---- Datos (editar acá) ----
+const CONFIG = {
+  // Número del local en formato internacional sin "+", ej: "59899123456".
+  // Vacío = WhatsApp deja elegir el contacto (modo demo).
+  whatsapp: "",
+  grandeExtra: 260,
+};
+const PIZZAS = [
+  {name:"Muzzarella", desc:"La de siempre: salsa de tomate casera, muzzarella bien fundida, orégano y aceitunas.", price:390, ing:["Salsa de tomate","Muzzarella","Orégano","Aceitunas"], al:["Gluten","Lácteos"], top:{oregano:40,aceituna:7}},
+  {name:"Napolitana", desc:"Rodajas de tomate fresco, ajo picado y orégano sobre muzzarella.", price:450, ing:["Muzzarella","Tomate","Ajo","Orégano"], al:["Gluten","Lácteos"], top:{tomate:7,ajo:14,oregano:30,aceituna:4}},
+  {name:"Margarita", desc:"Tomate, muzzarella y albahaca fresca. Simple y perfecta.", price:440, ing:["Salsa de tomate","Muzzarella","Tomate","Albahaca"], al:["Gluten","Lácteos"], top:{tomate:5,albahaca:7}},
+  {name:"Jamón y morrones", desc:"Jamón cocido, morrones asados y aceitunas. Un clásico de barrio.", price:490, ing:["Muzzarella","Jamón","Morrón","Aceitunas"], al:["Gluten","Lácteos"], top:{jamon:10,morron:9,aceituna:5}},
+  {name:"Fugazzeta", desc:"Doble muzzarella y cebolla en pluma, dorada en el horno.", price:470, ing:["Muzzarella","Cebolla","Orégano"], al:["Gluten","Lácteos"], white:true, top:{cebolla:26,oregano:25}},
+  {name:"Calabresa", desc:"Longaniza calabresa en rodajas con un toque picante.", price:490, ing:["Salsa de tomate","Muzzarella","Calabresa"], al:["Gluten","Lácteos"], top:{calabresa:14,oregano:20}},
+  {name:"Cuatro quesos", desc:"Muzzarella, roquefort, parmesano y provolone. Para los que no tienen miedo.", price:540, ing:["Muzzarella","Roquefort","Parmesano","Provolone"], al:["Gluten","Lácteos"], white:true, top:{roque:12,parmesano:16,provo:8}},
+  {name:"Rúcula y crudo", desc:"Al salir del horno: jamón crudo, rúcula fresca y lascas de parmesano.", price:590, ing:["Salsa de tomate","Muzzarella","Jamón crudo","Rúcula","Parmesano"], al:["Gluten","Lácteos"], top:{crudo:8,rucula:20,parmesano:10}},
+];
+const EXTRAS = {
+  "Para acompañar":[
+    {name:"Fainá", desc:"Por porción, bien finita.", price:95, ab:"F"},
+    {name:"Fainá con muzzarella", desc:"Por porción.", price:140, ab:"F"},
+    {name:"Papas fritas", desc:"Porción para compartir.", price:220, ab:"P"},
+  ],
+  "Bebidas":[
+    {name:"Refresco 1,5 L", desc:"Cola, naranja o pomelo.", price:170, ab:"R"},
+    {name:"Agua 600 ml", desc:"Con o sin gas.", price:90, ab:"A"},
+    {name:"Cerveza 1 L", desc:"Bien fría.", price:230, ab:"C"},
+  ],
+};
+
+// ---- Utilidades ----
+const $ = s => document.querySelector(s);
+const money = n => "$ " + n.toLocaleString("es-UY");
+const pad = n => String(n).padStart(2,"0");
+const M = window.Motion;
+const EASE = [.22,1,.36,1];
+const anim = (el, kf, opt={}) => M ? M.animate(el, kf, {duration:.5, ease:EASE, ...opt}) : Promise.resolve();
+if (M) document.documentElement.classList.add("js-motion");
+
+// ---- Pizza SVG procedural (reemplazar por fotos reales del local) ----
+function rng(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+let uid=0;
+function pizzaSVG(p, seed){
+  const r = rng(seed*977+13), id = "p"+(uid++);
+  const pos = (max=68) => {const a=r()*Math.PI*2, d=Math.sqrt(r())*max; return [Math.cos(a)*d, Math.sin(a)*d]};
+  const rot = () => (r()*360).toFixed(0);
+  let s = `<svg viewBox="-100 -100 200 200" aria-hidden="true"><defs>
+    <radialGradient id="${id}c"><stop offset=".78" stop-color="#f0bf74"/><stop offset=".92" stop-color="#d08b3e"/><stop offset="1" stop-color="#9a5a22"/></radialGradient>
+    <radialGradient id="${id}q"><stop offset="0" stop-color="#fff2c4"/><stop offset=".8" stop-color="#f4d68a"/><stop offset="1" stop-color="#e2b45c"/></radialGradient></defs>
+    <circle r="94" fill="url(#${id}c)"/>`;
+  for(let i=0;i<26;i++){const a=r()*Math.PI*2,d=86+r()*6;s+=`<circle cx="${(Math.cos(a)*d).toFixed(1)}" cy="${(Math.sin(a)*d).toFixed(1)}" r="${(1.5+r()*3).toFixed(1)}" fill="#5a3010" opacity="${(.25+r()*.4).toFixed(2)}"/>`}
+  s += `<circle r="80" fill="${p.white?"#f6e7b8":"#c4351d"}"/><circle r="78" fill="url(#${id}q)" opacity="${p.white?1:.9}"/>`;
+  for(let i=0;i<22;i++){const[x,y]=pos(70);s+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(3+r()*7).toFixed(1)}" fill="${r()>.5?"#fff6d6":"#d99a3c"}" opacity="${(.35+r()*.4).toFixed(2)}"/>`}
+  if(!p.white) for(let i=0;i<10;i++){const[x,y]=pos(70);s+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(2+r()*4).toFixed(1)}" fill="#c4351d" opacity=".55"/>`}
+  const T = p.top;
+  const put = (n, fn, max) => {for(let i=0;i<(n||0);i++){const[x,y]=pos(max);s+=`<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${rot()})">${fn()}</g>`}};
+  put(T.roque, ()=>`<path d="M-6-4 L5-6 L7 3 L-2 7 L-7 2Z" fill="#dfe6da"/><circle r="1.6" cx="1" cy="0" fill="#5f7d6a"/><circle r="1" cx="-3" cy="2" fill="#5f7d6a"/>`, 66);
+  put(T.provo, ()=>`<ellipse rx="10" ry="7" fill="#f2c062" opacity=".85"/>`, 60);
+  put(T.tomate, ()=>`<circle r="12" fill="#d63a29" stroke="#a62414" stroke-width="1.5"/><circle r="7" fill="#e85a3f"/>${[0,72,144,216,288].map(a=>`<ellipse rx="1.6" ry="2.6" fill="#f6cf74" transform="rotate(${a}) translate(0 -4.5)"/>`).join("")}`, 60);
+  put(T.jamon, ()=>`<rect x="-10" y="-7" width="20" height="14" rx="4" fill="#ec9e9a"/><rect x="-10" y="-7" width="20" height="3" rx="2" fill="#f8d0cc"/>`, 64);
+  put(T.calabresa, ()=>`<circle r="9.5" fill="#9f2c22"/><circle r="9.5" fill="none" stroke="#7a1e17" stroke-width="1.4"/><circle cx="-3" cy="-2" r="1.6" fill="#e8b6a0"/><circle cx="3" cy="2" r="1.3" fill="#e8b6a0"/><circle cx="2" cy="-4" r="1" fill="#e8b6a0"/>`, 66);
+  put(T.crudo, ()=>`<path d="M-14 -3 C-8 -9 -2 2 4 -4 S12 -2 14 3 C8 8 2 -2 -4 5 S-12 4 -14 -3Z" fill="#c4545a" opacity=".95"/><path d="M-12 -2 C-6 -6 0 2 6 -2" stroke="#f1c1bf" stroke-width="1.2" fill="none"/>`, 60);
+  put(T.morron, ()=>`<path d="M-11 0 Q0 -8 11 0" stroke="#e0342a" stroke-width="5" fill="none" stroke-linecap="round"/>`, 66);
+  put(T.cebolla, ()=>`<path d="M-8 2 Q0 -7 8 2" stroke="#f7f0e2" stroke-width="2.2" fill="none" stroke-linecap="round" opacity=".9"/><path d="M-8 2 Q0 -7 8 2" stroke="#b8862f" stroke-width=".8" fill="none" opacity=".6"/>`, 70);
+  put(T.ajo, ()=>`<ellipse rx="2.6" ry="1.4" fill="#fbf6ea"/>`, 66);
+  put(T.albahaca, ()=>`<path d="M0-13 C9-6 9 6 0 13 C-9 6 -9-6 0-13Z" fill="#3c8b37"/><path d="M0-12 L0 12" stroke="#2a6527" stroke-width="1"/>`, 56);
+  put(T.rucula, ()=>`<path d="M0-12 C4-8 2-5 6-3 C2-1 5 3 2 5 C3 8 1 10 0 12 C-1 10 -3 8 -2 5 C-5 3 -2-1 -6-3 C-2-5 -4-8 0-12Z" fill="#4f9a3a"/>`, 64);
+  put(T.parmesano, ()=>`<path d="M-4-3 L4-4 L3 3 L-3 4Z" fill="#fff8e0" opacity=".95"/>`, 66);
+  put(T.aceituna, ()=>`<circle r="5" fill="#231b18"/><circle r="2" fill="#5b4a40"/>`, 66);
+  for(let i=0;i<(T.oregano||0);i++){const[x,y]=pos(74);s+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r=".9" fill="#4f6b2a"/>`}
+  return s+"</svg>";
+}
+
+// ---- Carrusel ----
+let cur = 0, busy = false;
+const dots = $("#dots");
+PIZZAS.forEach((p,i)=>{const b=document.createElement("button");b.className="dot";b.setAttribute("aria-label",p.name);b.onclick=()=>go(i);dots.appendChild(b)});
+function fillHero(i){
+  const p = PIZZAS[i];
+  $("#hCount").textContent = `${pad(i+1)} / ${pad(PIZZAS.length)} · La carta`;
+  $("#hName").textContent = p.name;
+  $("#hDesc").textContent = p.desc;
+  $("#hTags").innerHTML = p.ing.map(t=>`<span class="chip">${t}</span>`).join("");
+  $("#hPrice").innerHTML = `${money(p.price)}<small>CHICA</small>`;
+  [...dots.children].forEach((d,k)=>d.classList.toggle("on",k===i));
+}
+async function go(i, dir){
+  if (busy || i===cur) return; busy = true;
+  dir = dir || (i>cur?1:-1);
+  const pz = $("#pizza"), txt = [...document.querySelectorAll(".hero-text > *:not(.ctrl)")];
+  await Promise.all([anim(pz,{rotate:[0,-dir*120],scale:[1,.7],opacity:[1,0]},{duration:.35,ease:"easeIn"}), anim(txt,{opacity:[1,0],y:[0,-12]},{duration:.2})]);
+  cur = i; $("#spin").innerHTML = pizzaSVG(PIZZAS[i], i); fillHero(i);
+  await Promise.all([anim(pz,{rotate:[dir*120,0],scale:[.7,1],opacity:[0,1]},{duration:.7}), anim(txt,{opacity:[0,1],y:[16,0]},{duration:.5,delay:M?M.stagger(.05):0})]);
+  busy = false;
+}
+const step = d => go((cur+d+PIZZAS.length)%PIZZAS.length, d);
+$("#prev").onclick = ()=>step(-1); $("#next").onclick = ()=>step(1);
+document.addEventListener("keydown", e=>{ if(document.querySelector(".drawer.on")) return; if(e.key==="ArrowRight") step(1); if(e.key==="ArrowLeft") step(-1)});
+let sx=null; const stage=$("#stage");
+stage.addEventListener("pointerdown",e=>sx=e.clientX);
+stage.addEventListener("pointerup",e=>{ if(sx===null) return; const dx=e.clientX-sx; sx=null; if(Math.abs(dx)>40) step(dx<0?1:-1); else if(e.target.closest("#pizza")) openDetail(cur)});
+$("#pizza").addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();openDetail(cur)}});
+$("#hOpen").onclick = ()=>openDetail(cur);
+$("#spin").innerHTML = pizzaSVG(PIZZAS[0],0); fillHero(0);
+
+// ---- Drawers ----
+const scrim = $("#scrim"); let openEl = null, lastFocus = null;
+const isSheet = () => matchMedia("(max-width:600px)").matches;
+function openDrawer(el){
+  if(openEl) closeDrawer(true);
+  lastFocus = document.activeElement; openEl = el; el.classList.add("on"); scrim.classList.add("on");
+  const k = isSheet()?"y":"x"; anim(el,{[k]:["100%","0%"]},{duration:.45});
+  setTimeout(()=>el.querySelector("[data-close]").focus(),50);
+}
+function closeDrawer(instant){
+  if(!openEl) return; const el = openEl; openEl = null; scrim.classList.remove("on");
+  const k = isSheet()?"y":"x";
+  if(instant){el.classList.remove("on");el.style.transform="";return}
+  Promise.resolve(anim(el,{[k]:["0%","100%"]},{duration:.3,ease:"easeIn"})).then(()=>{el.classList.remove("on")});
+  lastFocus && lastFocus.focus();
+}
+scrim.onclick = ()=>closeDrawer();
+document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>closeDrawer());
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeDrawer()});
+
+// ---- Detalle ----
+let sel = {i:0,size:0,qty:1};
+function detailPrice(){const p=PIZZAS[sel.i];return (p.price+(sel.size?CONFIG.grandeExtra:0))*sel.qty}
+function renderDetail(){
+  const p = PIZZAS[sel.i];
+  $("#dSizes").innerHTML = [["Chica","4 porciones",p.price],["Grande","8 porciones",p.price+CONFIG.grandeExtra]].map((s,k)=>
+    `<button class="size" role="radio" aria-checked="${sel.size===k}" data-k="${k}"><b>${s[0]}</b><span>${s[1]} · ${money(s[2])}</span></button>`).join("");
+  $("#dSizes").querySelectorAll(".size").forEach(b=>b.onclick=()=>{sel.size=+b.dataset.k;renderDetail()});
+  $("#qVal").textContent = sel.qty;
+  $("#dAdd").textContent = `Agregar al pedido · ${money(detailPrice())}`;
+}
+function openDetail(i){
+  const p = PIZZAS[i]; sel = {i,size:0,qty:1};
+  $("#dCount").textContent = `${pad(i+1)} / ${pad(PIZZAS.length)}`;
+  $("#dPizza").innerHTML = pizzaSVG(p,i);
+  $("#dName").textContent = p.name; $("#dDesc").textContent = p.desc;
+  $("#dIng").innerHTML = p.ing.map(t=>`<span class="chip">${t}</span>`).join("");
+  $("#dAl").innerHTML = p.al.map(t=>`<span class="chip alert">${t}</span>`).join("");
+  renderDetail(); openDrawer($("#detail"));
+  anim($("#dPizza"),{rotate:[-90,0],scale:[.6,1],opacity:[0,1]},{duration:.7,delay:.1});
+}
+$("#qMinus").onclick=()=>{sel.qty=Math.max(1,sel.qty-1);renderDetail()};
+$("#qPlus").onclick=()=>{sel.qty=Math.min(20,sel.qty+1);renderDetail()};
+$("#dAdd").onclick=()=>{
+  const p = PIZZAS[sel.i], size = sel.size?"Grande":"Chica";
+  addToCart(`${p.name} (${size})`, p.price+(sel.size?CONFIG.grandeExtra:0), sel.qty);
+  closeDrawer();
+};
+
+// ---- Pedido ----
+const cart = [];
+function addToCart(name, price, qty=1){
+  const ex = cart.find(c=>c.name===name); ex ? ex.qty+=qty : cart.push({name,price,qty});
+  const n = cart.reduce((a,c)=>a+c.qty,0), b=$("#badge"); b.textContent=n; b.dataset.n=n;
+  anim(b,{scale:[1.6,1]},{duration:.4});
+  toast(`${qty>1?qty+" × ":""}${name} agregado al pedido`);
+}
+function renderCart(){
+  const body=$("#cBody"), total=cart.reduce((a,c)=>a+c.price*c.qty,0);
+  $("#cFoot").style.display = cart.length?"":"none";
+  body.innerHTML = cart.length ? cart.map((c,k)=>`<div class="line"><div>${c.qty} × ${c.name}<small>${money(c.price)} c/u</small><button class="rm" data-k="${k}">Quitar</button></div><b>${money(c.price*c.qty)}</b></div>`).join("")
+    : `<p class="empty">Todavía no agregaste nada.<br>Tocá una pizza para empezar.</p>`;
+  body.querySelectorAll(".rm").forEach(b=>b.onclick=()=>{cart.splice(+b.dataset.k,1);const n=cart.reduce((a,c)=>a+c.qty,0);$("#badge").textContent=n;$("#badge").dataset.n=n;renderCart()});
+  $("#cTotal").textContent = money(total);
+}
+$("#openCart").onclick=()=>{renderCart();openDrawer($("#cart"))};
+function wa(text){window.open(`https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(text)}`,"_blank","noopener")}
+$("#cSend").onclick=()=>{
+  const total=cart.reduce((a,c)=>a+c.price*c.qty,0);
+  wa(`Hola Six Seven! Quiero pedir:\n${cart.map(c=>`• ${c.qty} × ${c.name}`).join("\n")}\nTotal: ${money(total)}`);
+};
+
+// ---- Carta completa ----
+const CATS = {"Pizzas":PIZZAS.map((p,i)=>({...p,i})), ...EXTRAS};
+const tabs=$("#tabs");
+Object.keys(CATS).forEach((c,k)=>{const b=document.createElement("button");b.className="tab";b.role="tab";b.textContent=c;b.setAttribute("aria-selected",k===0);b.onclick=()=>showCat(c);tabs.appendChild(b)});
+function showCat(c){
+  tabs.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-selected",t.textContent===c));
+  const L=$("#list");
+  L.innerHTML = CATS[c].map((it,k)=>`<div class="item"><div class="thumb">${it.top?pizzaSVG(it,it.i):it.ab}</div><div><h3>${it.name}</h3><p>${it.desc}</p></div><div class="right"><b>${money(it.price)}</b><button class="add" data-c="${c}" data-k="${k}" aria-label="Agregar ${it.name}">+</button></div></div>`).join("");
+  L.querySelectorAll(".add").forEach(b=>b.onclick=()=>{const it=CATS[b.dataset.c][+b.dataset.k]; it.top?openDetail(it.i):addToCart(it.name,it.price)});
+  L.querySelectorAll(".item").forEach(r=>{ if(r.querySelector(".thumb svg")) r.querySelector(".thumb").onclick=()=>openDetail(CATS[c][[...L.children].indexOf(r)].i)});
+  anim(L.children,{opacity:[0,1],y:[14,0]},{duration:.4,delay:M?M.stagger(.04):0});
+}
+showCat("Pizzas");
+
+// ---- Reservas ----
+const f=$("#resForm");
+f.dia.min = new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10); f.dia.value=f.dia.min;
+for(let h=11;h<=23;h++) for(const m of ["00","30"]) f.hora.add(new Option(`${h}:${m}`)); f.hora.value="21:00";
+for(let n=1;n<=12;n++) f.pers.add(new Option(n+(n===1?" persona":" personas"),n)); f.pers.value=2;
+f.onsubmit=e=>{e.preventDefault();const d=new Date(f.dia.value+"T12:00").toLocaleDateString("es-UY",{weekday:"long",day:"numeric",month:"long"});
+  wa(`Hola Six Seven! Quisiera reservar mesa para ${f.pers.value} el ${d} a las ${f.hora.value}. A nombre de ${f.nombre.value}.`)};
+
+// ---- Toast ----
+let tt; function toast(msg){const t=$("#toast");t.textContent=msg;clearTimeout(tt);anim(t,{opacity:[0,1],y:[20,0]},{duration:.35});tt=setTimeout(()=>anim(t,{opacity:[1,0]},{duration:.3}),2200)}
+
+// ---- Animaciones al hacer scroll ----
+if (M){
+  const targetOf = a => (a && a.target) || a;
+  M.inView(".reveal", a=>{anim(targetOf(a),{opacity:[0,1],y:[24,0]},{duration:.7})}, {amount:.2});
+  M.inView(".stats", a=>{
+    targetOf(a).querySelectorAll("[data-count]").forEach(el=>{const to=+el.dataset.count,dec=+(el.dataset.dec||0),suf=el.dataset.suffix||"";
+      M.animate(0,to,{duration:1.4,ease:EASE,onUpdate:v=>el.textContent=v.toFixed(dec)+suf})});
+  }, {amount:.4});
+  M.animate("#ember",{scale:[1,1.08,1],opacity:[.85,1,.85]},{duration:3,repeat:Infinity,ease:"easeInOut"});
+} else document.querySelectorAll("[data-count]").forEach(el=>el.textContent=el.dataset.count+(el.dataset.suffix||""));
+</script>
+</body>
+</html>
