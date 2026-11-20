@@ -28,7 +28,7 @@ a{color:inherit}
 :focus-visible{outline:2px solid var(--red2);outline-offset:3px;border-radius:6px}
 .wrap{max-width:1180px;margin:0 auto;padding:0 16px}
 .mono{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
-.btn{display:inline-flex;align-items:center;gap:8px;background:var(--red);color:#fff;font-weight:600;padding:12px 20px;border-radius:999px;transition:background .2s}
+.btn{text-decoration:none;display:inline-flex;align-items:center;gap:8px;background:var(--red);color:#fff;font-weight:600;padding:12px 20px;border-radius:999px;transition:background .2s}
 .btn:hover{background:var(--red2)}
 .btn.ghost{background:transparent;border:1px solid var(--line)}
 .btn.ghost:hover{border-color:var(--muted)}
@@ -223,7 +223,7 @@ footer{border-top:1px solid var(--line);padding:40px 0 60px;color:var(--muted);f
         <div class="stats">
           <div class="stat reveal"><b data-count="4.8" data-dec="1">0</b><span>estrellas en Google</span></div>
           <div class="stat reveal"><b data-count="8">0</b><span>pizzas en la carta</span></div>
-          <div class="stat reveal"><b data-count="11" data-suffix=":00">0</b><span>abrimos todos los días</span></div>
+          <div class="stat reveal"><b data-count="11" data-suffix=":00">0</b><span>abrimos</span></div>
         </div>
       </div>
       <div class="ember" id="ember" aria-hidden="true"></div>
@@ -347,7 +347,7 @@ function pizzaSVG(p, seed){
     <radialGradient id="${id}q"><stop offset="0" stop-color="#fff2c4"/><stop offset=".8" stop-color="#f4d68a"/><stop offset="1" stop-color="#e2b45c"/></radialGradient></defs>
     <circle r="94" fill="url(#${id}c)"/>`;
   for(let i=0;i<26;i++){const a=r()*Math.PI*2,d=86+r()*6;s+=`<circle cx="${(Math.cos(a)*d).toFixed(1)}" cy="${(Math.sin(a)*d).toFixed(1)}" r="${(1.5+r()*3).toFixed(1)}" fill="#5a3010" opacity="${(.25+r()*.4).toFixed(2)}"/>`}
-  s += `<circle r="80" fill="${p.white?"#f6e7b8":"#c4351d"}"/><circle r="78" fill="url(#${id}q)" opacity="${p.white?1:.9}"/>`;
+  s += `<circle r="80" fill="${p.white?"#f6e7b8":"#c4351d"}"/><circle r="79.5" fill="url(#${id}q)" opacity="${p.white?1:.9}"/>`;
   for(let i=0;i<22;i++){const[x,y]=pos(70);s+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(3+r()*7).toFixed(1)}" fill="${r()>.5?"#fff6d6":"#d99a3c"}" opacity="${(.35+r()*.4).toFixed(2)}"/>`}
   if(!p.white) for(let i=0;i<10;i++){const[x,y]=pos(70);s+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(2+r()*4).toFixed(1)}" fill="#c4351d" opacity=".55"/>`}
   const T = p.top;
