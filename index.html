@@ -169,7 +169,7 @@ footer{border-top:1px solid var(--line);padding:40px 0 60px;color:var(--muted);f
 </head>
 <body>
 
-<div class="demo">Demo · fotos y precios de ejemplo</div>
+<div class="demo">Demo · las fotos de las pizzas son ilustraciones</div>
 
 <header>
   <div class="wrap nav">
@@ -192,8 +192,8 @@ footer{border-top:1px solid var(--line);padding:40px 0 60px;color:var(--muted);f
   <div class="hero">
     <div class="wrap hero-grid">
       <div class="hero-text">
-        <div class="mono" id="hCount">01 / 08 · La carta</div>
-        <h1 id="hName">Muzzarella</h1>
+        <div class="mono" id="hCount">01 / 06 · Pizzetas</div>
+        <h1 id="hName">Clásica</h1>
         <p class="desc" id="hDesc"></p>
         <div class="tags" id="hTags"></div>
         <div class="buy">
@@ -222,7 +222,7 @@ footer{border-top:1px solid var(--line);padding:40px 0 60px;color:var(--muted);f
         <p class="reveal">Pizza al estilo uruguayo, de barrio, como tiene que ser. Pedí desde la mesa escaneando el QR, o desde tu casa por WhatsApp.</p>
         <div class="stats">
           <div class="stat reveal"><b data-count="4.8" data-dec="1">0</b><span>estrellas en Google</span></div>
-          <div class="stat reveal"><b data-count="8">0</b><span>pizzas en la carta</span></div>
+          <div class="stat reveal"><b data-count="6">0</b><span>pizzetas en la carta</span></div>
           <div class="stat reveal"><b data-count="11" data-suffix=":00">0</b><span>abrimos</span></div>
         </div>
       </div>
@@ -277,7 +277,7 @@ footer{border-top:1px solid var(--line);padding:40px 0 60px;color:var(--muted);f
     <p id="dDesc"></p>
     <div class="grp"><span class="mono">Ingredientes</span><div class="tags" id="dIng"></div></div>
     <div class="grp"><span class="mono">Alérgenos</span><div class="tags" id="dAl"></div></div>
-    <div class="grp"><span class="mono">Tamaño</span><div class="sizes" id="dSizes" role="radiogroup"></div></div>
+    <div class="grp" id="dPickGrp"><span class="mono" id="dPickLbl"></span><div class="tags" id="dPick"></div></div>
     <div class="grp"><span class="mono">Cantidad</span><div class="qty"><button id="qMinus" aria-label="Menos">−</button><b id="qVal">1</b><button id="qPlus" aria-label="Más">+</button></div></div>
   </div>
   <div class="d-foot"><button class="btn" id="dAdd">Agregar al pedido</button></div>
@@ -301,28 +301,55 @@ const CONFIG = {
   // Número del local en formato internacional sin "+", ej: "59899123456".
   // Vacío = WhatsApp deja elegir el contacto (modo demo).
   whatsapp: "",
-  grandeExtra: 260,
 };
+// Carta real (foto del local, 20/11/2026). Alérgenos inferidos de los ingredientes: confirmar con el local.
+const GUSTOS = ["Huevo","Jamón","Pepperoni","Cebolla caramelizada","Panceta","Cheddar","Aceituna","Morrón","Ananá"];
 const PIZZAS = [
-  {name:"Muzzarella", desc:"La de siempre: salsa de tomate casera, muzzarella bien fundida, orégano y aceitunas.", price:390, ing:["Salsa de tomate","Muzzarella","Orégano","Aceitunas"], al:["Gluten","Lácteos"], top:{oregano:40,aceituna:7}},
-  {name:"Napolitana", desc:"Rodajas de tomate fresco, ajo picado y orégano sobre muzzarella.", price:450, ing:["Muzzarella","Tomate","Ajo","Orégano"], al:["Gluten","Lácteos"], top:{tomate:7,ajo:14,oregano:30,aceituna:4}},
-  {name:"Margarita", desc:"Tomate, muzzarella y albahaca fresca. Simple y perfecta.", price:440, ing:["Salsa de tomate","Muzzarella","Tomate","Albahaca"], al:["Gluten","Lácteos"], top:{tomate:5,albahaca:7}},
-  {name:"Jamón y morrones", desc:"Jamón cocido, morrones asados y aceitunas. Un clásico de barrio.", price:490, ing:["Muzzarella","Jamón","Morrón","Aceitunas"], al:["Gluten","Lácteos"], top:{jamon:10,morron:9,aceituna:5}},
-  {name:"Fugazzeta", desc:"Doble muzzarella y cebolla en pluma, dorada en el horno.", price:470, ing:["Muzzarella","Cebolla","Orégano"], al:["Gluten","Lácteos"], white:true, top:{cebolla:26,oregano:25}},
-  {name:"Calabresa", desc:"Longaniza calabresa en rodajas con un toque picante.", price:490, ing:["Salsa de tomate","Muzzarella","Calabresa"], al:["Gluten","Lácteos"], top:{calabresa:14,oregano:20}},
-  {name:"Cuatro quesos", desc:"Muzzarella, roquefort, parmesano y provolone. Para los que no tienen miedo.", price:540, ing:["Muzzarella","Roquefort","Parmesano","Provolone"], al:["Gluten","Lácteos"], white:true, top:{roque:12,parmesano:16,provo:8}},
-  {name:"Rúcula y crudo", desc:"Al salir del horno: jamón crudo, rúcula fresca y lascas de parmesano.", price:590, ing:["Salsa de tomate","Muzzarella","Jamón crudo","Rúcula","Parmesano"], al:["Gluten","Lácteos"], top:{crudo:8,rucula:20,parmesano:10}},
+  {name:"Clásica", desc:"Solo mozzarella. La que nunca falla.", price:390, ing:["Mozzarella"], al:["Gluten","Lácteos"], top:{oregano:35}},
+  {name:"Hawaiana", desc:"Jamón y ananá sobre mozzarella.", price:420, ing:["Mozzarella","Jamón","Ananá"], al:["Gluten","Lácteos"], top:{jamon:9,anana:9}},
+  {name:"Siciliana", desc:"Pepperoni, morrón, aceituna y cebolla caramelizada.", price:480, ing:["Mozzarella","Pepperoni","Morrón","Aceituna","Cebolla caramelizada"], al:["Gluten","Lácteos"], top:{caramel:14,calabresa:10,morron:7,aceituna:6}},
+  {name:"Americana", desc:"Cheddar, panceta, huevo frito y papas fritas.", price:650, ing:["Mozzarella","Cheddar","Panceta","Huevo frito","Papas fritas"], al:["Gluten","Lácteos","Huevo"], top:{cheddar:10,panceta:8,papas:14,huevo:1}},
+  {name:"Canadiense", desc:"Jamón, panceta y huevo frito.", price:650, ing:["Mozzarella","Jamón","Panceta","Huevo frito"], al:["Gluten","Lácteos","Huevo"], top:{jamon:7,panceta:8,huevo:2}},
+  {name:"Six Seven", desc:"La de la casa: mozzarella más cuatro gustos a elección.", price:680, ing:["Mozzarella","4 gustos a elección"], al:["Gluten","Lácteos"], pick:4, top:{calabresa:6,panceta:5,anana:5,aceituna:5,caramel:8}},
 ];
 const EXTRAS = {
-  "Para acompañar":[
-    {name:"Fainá", desc:"Por porción, bien finita.", price:95, ab:"F"},
-    {name:"Fainá con muzzarella", desc:"Por porción.", price:140, ab:"F"},
-    {name:"Papas fritas", desc:"Porción para compartir.", price:220, ab:"P"},
+  "Milanesas":[
+    {name:"Milanesa c/fritas", desc:"Todas las milanesas van con fritas de regalo.", price:380, ab:"M"},
+    {name:"Mila a caballo", desc:"Con dos huevos fritos.", price:420, ab:"M"},
+    {name:"Mila napolitana", desc:"Jamón, mozzarella y salsa.", price:500, ab:"M"},
+    {name:"Mila americana", desc:"Cheddar, panceta y huevo frito.", price:590, ab:"M"},
+    {name:"Mila en 2 panes", desc:"Lechuga, tomate, mayonesa y huevo duro.", price:450, ab:"M"},
+    {name:"Mila en 2 panes completa", desc:"Lechuga, tomate, jamón, mozzarella, panceta, huevo y mayonesa.", price:590, ab:"M"},
+  ],
+  "Megas":[
+    {name:"Mega a caballo", desc:"Mila con seis huevos fritos.", price:1290, ab:"XL"},
+    {name:"Mega napolitana", desc:"Jamón, mozzarella y salsa.", price:1350, ab:"XL"},
+    {name:"Mega americana", desc:"Cheddar, panceta y seis huevos fritos.", price:1490, ab:"XL"},
+    {name:"Mega Six Seven", desc:"Lechuga, tomate, jamón, mozzarella, panceta, seis huevos fritos, salsas y papas pay. Con porción de fritas con cheddar.", price:1800, ab:"XL"},
+  ],
+  "Pizza y fainá":[
+    {name:"Pizza", desc:"", price:180, ab:"P"},
+    {name:"Muzza", desc:"", price:270, ab:"P"},
+    {name:"Fainá", desc:"", price:150, ab:"F"},
+    {name:"Gustos (cada uno)", desc:GUSTOS.join(", ")+".", price:null, ab:"+"},
+  ],
+  "Pastas":[
+    {name:"Capeletis", desc:"Salsas: filetto, tuco, caruso o champi.", price:420, ab:"P"},
+    {name:"Sorrentinos", desc:"Salsas: filetto, tuco, caruso o champi.", price:350, ab:"P"},
+    {name:"Raviolones", desc:"Salsas: filetto, tuco, caruso o champi.", price:350, ab:"P"},
+    {name:"Ravioles", desc:"Salsas: filetto, tuco, caruso o champi.", price:280, ab:"P"},
+    {name:"Tallarines", desc:"Salsas: filetto, tuco, caruso o champi.", price:250, ab:"P"},
+  ],
+  "Panchos y fritas":[
+    {name:"Pancho al pan", desc:"", price:120, ab:"P"},
+    {name:"Pancho c/muzza", desc:"", price:150, ab:"P"},
+    {name:"Fritas", desc:"", price:250, ab:"F"},
+    {name:"Fritas salseadas", desc:"Champi o cheddar.", price:340, ab:"F"},
   ],
   "Bebidas":[
-    {name:"Refresco 1,5 L", desc:"Cola, naranja o pomelo.", price:170, ab:"R"},
-    {name:"Agua 600 ml", desc:"Con o sin gas.", price:90, ab:"A"},
-    {name:"Cerveza 1 L", desc:"Bien fría.", price:230, ab:"C"},
+    {name:"Cerveza", desc:"", price:280, ab:"B"},
+    {name:"Refresco", desc:"", price:230, ab:"B"},
+    {name:"Agua", desc:"", price:100, ab:"B"},
   ],
 };
 
@@ -364,7 +391,13 @@ function pizzaSVG(p, seed){
   put(T.albahaca, ()=>`<path d="M0-13 C9-6 9 6 0 13 C-9 6 -9-6 0-13Z" fill="#3c8b37"/><path d="M0-12 L0 12" stroke="#2a6527" stroke-width="1"/>`, 56);
   put(T.rucula, ()=>`<path d="M0-12 C4-8 2-5 6-3 C2-1 5 3 2 5 C3 8 1 10 0 12 C-1 10 -3 8 -2 5 C-5 3 -2-1 -6-3 C-2-5 -4-8 0-12Z" fill="#4f9a3a"/>`, 64);
   put(T.parmesano, ()=>`<path d="M-4-3 L4-4 L3 3 L-3 4Z" fill="#fff8e0" opacity=".95"/>`, 66);
-  put(T.aceituna, ()=>`<circle r="5" fill="#231b18"/><circle r="2" fill="#5b4a40"/>`, 66);
+  put(T.caramel, ()=>`<path d="M-8 2 Q0 -7 8 2" stroke="#8a4b1c" stroke-width="2.6" fill="none" stroke-linecap="round"/>`, 70);
+  put(T.cheddar, ()=>`<path d="M-9-2 C-6-8 4-7 8-3 C11 1 6 7 0 6 C-6 6 -11 3 -9-2Z" fill="#f29a1f" opacity=".9"/>`, 66);
+  put(T.panceta, ()=>`<rect x="-12" y="-4" width="24" height="8" rx="3" fill="#b8403a"/><rect x="-12" y="-1" width="24" height="2" fill="#f3d6c8"/>`, 64);
+  put(T.anana, ()=>`<path d="M-7 5 L0-8 L7 5Z" fill="#f7d34a" stroke="#e0ad1e" stroke-width="1"/>`, 66);
+  put(T.papas, ()=>`<rect x="-10" y="-2.2" width="20" height="4.4" rx="1.5" fill="#f2c14e" stroke="#c98d24" stroke-width=".8"/>`, 62);
+  put(T.huevo, ()=>`<path d="M-22-6 C-18-20 4-22 16-14 C26-6 22 12 8 18 C-6 24 -26 10 -22-6Z" fill="#fffaf0"/><circle r="9" cx="-1" cy="0" fill="#f6a91b"/><circle r="3" cx="-4" cy="-3" fill="#ffd36b" opacity=".8"/>`, 34);
+  put(T.aceituna,()=>`<circle r="5" fill="#231b18"/><circle r="2" fill="#5b4a40"/>`, 66);
   for(let i=0;i<(T.oregano||0);i++){const[x,y]=pos(74);s+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r=".9" fill="#4f6b2a"/>`}
   return s+"</svg>";
 }
@@ -375,11 +408,11 @@ const dots = $("#dots");
 PIZZAS.forEach((p,i)=>{const b=document.createElement("button");b.className="dot";b.setAttribute("aria-label",p.name);b.onclick=()=>go(i);dots.appendChild(b)});
 function fillHero(i){
   const p = PIZZAS[i];
-  $("#hCount").textContent = `${pad(i+1)} / ${pad(PIZZAS.length)} · La carta`;
+  $("#hCount").textContent = `${pad(i+1)} / ${pad(PIZZAS.length)} · Pizzetas`;
   $("#hName").textContent = p.name;
   $("#hDesc").textContent = p.desc;
   $("#hTags").innerHTML = p.ing.map(t=>`<span class="chip">${t}</span>`).join("");
-  $("#hPrice").innerHTML = `${money(p.price)}<small>CHICA</small>`;
+  $("#hPrice").textContent = money(p.price);
   [...dots.children].forEach((d,k)=>d.classList.toggle("on",k===i));
 }
 async function go(i, dir){
@@ -422,18 +455,23 @@ document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>closeDrawer()
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeDrawer()});
 
 // ---- Detalle ----
-let sel = {i:0,size:0,qty:1};
-function detailPrice(){const p=PIZZAS[sel.i];return (p.price+(sel.size?CONFIG.grandeExtra:0))*sel.qty}
+let sel = {i:0,qty:1,pick:[]};
 function renderDetail(){
-  const p = PIZZAS[sel.i];
-  $("#dSizes").innerHTML = [["Chica","4 porciones",p.price],["Grande","8 porciones",p.price+CONFIG.grandeExtra]].map((s,k)=>
-    `<button class="size" role="radio" aria-checked="${sel.size===k}" data-k="${k}"><b>${s[0]}</b><span>${s[1]} · ${money(s[2])}</span></button>`).join("");
-  $("#dSizes").querySelectorAll(".size").forEach(b=>b.onclick=()=>{sel.size=+b.dataset.k;renderDetail()});
+  const p = PIZZAS[sel.i], n = p.pick||0;
+  $("#dPickGrp").style.display = n?"":"none";
+  if(n){
+    $("#dPickLbl").textContent = `Elegí ${n} gustos · ${sel.pick.length}/${n}`;
+    $("#dPick").innerHTML = GUSTOS.map(g=>`<button class="size" role="checkbox" aria-checked="${sel.pick.includes(g)}" style="padding:8px 12px;border-radius:999px">${g}</button>`).join("");
+    $("#dPick").querySelectorAll("button").forEach(b=>b.onclick=()=>{const g=b.textContent,k=sel.pick.indexOf(g);
+      if(k>=0) sel.pick.splice(k,1); else if(sel.pick.length<n) sel.pick.push(g); renderDetail()});
+  }
   $("#qVal").textContent = sel.qty;
-  $("#dAdd").textContent = `Agregar al pedido · ${money(detailPrice())}`;
+  const ok = !n || sel.pick.length===n;
+  $("#dAdd").disabled = !ok; $("#dAdd").style.opacity = ok?1:.5;
+  $("#dAdd").textContent = ok ? `Agregar al pedido · ${money(p.price*sel.qty)}` : `Elegí ${n-sel.pick.length} gusto${n-sel.pick.length>1?"s":""} más`;
 }
 function openDetail(i){
-  const p = PIZZAS[i]; sel = {i,size:0,qty:1};
+  const p = PIZZAS[i]; sel = {i,qty:1,pick:[]};
   $("#dCount").textContent = `${pad(i+1)} / ${pad(PIZZAS.length)}`;
   $("#dPizza").innerHTML = pizzaSVG(p,i);
   $("#dName").textContent = p.name; $("#dDesc").textContent = p.desc;
@@ -445,8 +483,8 @@ function openDetail(i){
 $("#qMinus").onclick=()=>{sel.qty=Math.max(1,sel.qty-1);renderDetail()};
 $("#qPlus").onclick=()=>{sel.qty=Math.min(20,sel.qty+1);renderDetail()};
 $("#dAdd").onclick=()=>{
-  const p = PIZZAS[sel.i], size = sel.size?"Grande":"Chica";
-  addToCart(`${p.name} (${size})`, p.price+(sel.size?CONFIG.grandeExtra:0), sel.qty);
+  const p = PIZZAS[sel.i];
+  addToCart(`Pizzeta ${p.name}${sel.pick.length?` (${sel.pick.join(", ")})`:""}`, p.price, sel.qty);
   closeDrawer();
 };
 
@@ -474,18 +512,18 @@ $("#cSend").onclick=()=>{
 };
 
 // ---- Carta completa ----
-const CATS = {"Pizzas":PIZZAS.map((p,i)=>({...p,i})), ...EXTRAS};
+const CATS = {"Pizzetas":PIZZAS.map((p,i)=>({...p,i})), ...EXTRAS};
 const tabs=$("#tabs");
 Object.keys(CATS).forEach((c,k)=>{const b=document.createElement("button");b.className="tab";b.role="tab";b.textContent=c;b.setAttribute("aria-selected",k===0);b.onclick=()=>showCat(c);tabs.appendChild(b)});
 function showCat(c){
   tabs.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-selected",t.textContent===c));
   const L=$("#list");
-  L.innerHTML = CATS[c].map((it,k)=>`<div class="item"><div class="thumb">${it.top?pizzaSVG(it,it.i):it.ab}</div><div><h3>${it.name}</h3><p>${it.desc}</p></div><div class="right"><b>${money(it.price)}</b><button class="add" data-c="${c}" data-k="${k}" aria-label="Agregar ${it.name}">+</button></div></div>`).join("");
+  L.innerHTML = CATS[c].map((it,k)=>`<div class="item"><div class="thumb">${it.top?pizzaSVG(it,it.i):it.ab}</div><div><h3>${it.name}</h3><p>${it.desc}</p></div><div class="right"><b>${it.price==null?"Consultar":money(it.price)}</b>${it.price==null?"":`<button class="add" data-c="${c}" data-k="${k}" aria-label="Agregar ${it.name}">+</button>`}</div></div>`).join("");
   L.querySelectorAll(".add").forEach(b=>b.onclick=()=>{const it=CATS[b.dataset.c][+b.dataset.k]; it.top?openDetail(it.i):addToCart(it.name,it.price)});
   L.querySelectorAll(".item").forEach(r=>{ if(r.querySelector(".thumb svg")) r.querySelector(".thumb").onclick=()=>openDetail(CATS[c][[...L.children].indexOf(r)].i)});
   anim(L.children,{opacity:[0,1],y:[14,0]},{duration:.4,delay:M?M.stagger(.04):0});
 }
-showCat("Pizzas");
+showCat("Pizzetas");
 
 // ---- Reservas ----
 const f=$("#resForm");
