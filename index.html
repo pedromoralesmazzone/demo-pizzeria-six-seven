@@ -163,6 +163,43 @@ footer{border-top:1px solid var(--line);padding:40px 0 60px;color:var(--muted);f
 
 .toast{position:fixed;left:50%;bottom:24px;z-index:60;transform:translateX(-50%);background:var(--text);color:var(--bg);font-weight:600;font-size:14px;padding:12px 18px;border-radius:999px;opacity:0;pointer-events:none;white-space:nowrap;box-shadow:0 10px 30px rgba(0,0,0,.4)}
 
+form .alt{grid-column:1/-1;margin-top:0}
+.stage{cursor:grab}.stage:active{cursor:grabbing}
+.pizza{will-change:transform}
+
+/* barra inferior (solo celular) */
+.mbar{display:none}
+@media (max-width:760px){
+  .demo{font-size:10px;letter-spacing:.1em}
+  .hero{padding:12px 0 40px}
+  .stage{max-width:min(320px,82vw)}
+  .hero h1{font-size:clamp(40px,12vw,56px);margin-bottom:12px}
+  .hero p.desc{margin-bottom:14px}
+  .tags{margin-bottom:20px}
+  .ctrl{margin-top:22px;justify-content:space-between}
+  section{padding:64px 0}
+  .stats{gap:10px}.stat b{font-size:34px}
+  .tabs{flex-wrap:nowrap;overflow-x:auto;margin:0 -16px 24px;padding:0 16px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex:none}
+  .item{grid-template-columns:48px 1fr auto;gap:12px}
+  .thumb{width:48px;height:48px}
+  .add{width:40px;height:40px}
+  form{grid-template-columns:1fr;padding:18px}
+  footer{padding-bottom:120px}
+  .toast{bottom:calc(90px + env(safe-area-inset-bottom));max-width:calc(100% - 32px);white-space:normal;text-align:center;border-radius:18px}
+  .mbar{position:fixed;z-index:35;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:6px;padding:6px;
+    background:rgba(31,23,20,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+  .mbar a,.mbar button{display:flex;align-items:center;justify-content:center;gap:6px;height:46px;border-radius:999px;font-weight:600;font-size:14px;text-decoration:none}
+  .mbar .go{background:var(--red);color:#fff}
+  .mbar .badge{position:static}
+}
+@media (max-width:600px){
+  .d-head{position:relative;touch-action:none;padding-top:24px}
+  .d-head::before{content:"";position:absolute;top:9px;left:50%;width:44px;height:5px;margin-left:-22px;border-radius:5px;background:var(--line)}
+  .d-foot{padding-bottom:calc(18px + env(safe-area-inset-bottom))}
+}
+
 /* reveal (only hidden when Motion loaded) */
 .js-motion .reveal{opacity:0}
 </style>
@@ -252,8 +289,9 @@ footer{border-top:1px solid var(--line);padding:40px 0 60px;color:var(--muted);f
         <label>Día<input type="date" name="dia" required></label>
         <label>Hora<select name="hora" required></select></label>
         <label>Personas<select name="pers"></select></label>
-        <label>Nombre<input name="nombre" autocomplete="name" required placeholder="Tu nombre"></label>
+        <label>Nombre<input name="nombre" autocomplete="name" required minlength="2" maxlength="40" placeholder="Tu nombre"></label>
         <button class="btn" type="submit">Reservar por WhatsApp</button>
+        <a class="alt" href="tel:+59826240217">o llamá al 2624 0217</a>
       </form>
     </div>
   </section>
@@ -266,6 +304,12 @@ footer{border-top:1px solid var(--line);padding:40px 0 60px;color:var(--muted);f
     <div><b>Cómo llegar</b><a href="https://www.google.com/maps/search/?api=1&query=Pizzer%C3%ADa+Six+Seven+Dem%C3%B3stenes+3479+Montevideo" target="_blank" rel="noopener">Abrir en Google Maps</a></div>
   </div>
 </footer>
+
+<nav class="mbar" aria-label="Accesos rápidos">
+  <a href="#carta">Carta</a>
+  <a href="#reservas">Reservar</a>
+  <button class="go" id="mCart">Mi pedido <span class="badge" data-n="0">0</span></button>
+</nav>
 
 <div class="scrim" id="scrim"></div>
 
@@ -289,7 +333,7 @@ footer{border-top:1px solid var(--line);padding:40px 0 60px;color:var(--muted);f
   <div class="d-foot" id="cFoot">
     <div class="total"><span>Total</span><span id="cTotal"></span></div>
     <button class="btn" id="cSend">Enviar pedido por WhatsApp</button>
-    <span class="alt">o pedí por PedidosYa</span>
+    <a class="alt" href="tel:+59826240217">o llamá al 2624 0217</a>
   </div>
 </aside>
 
@@ -298,9 +342,11 @@ footer{border-top:1px solid var(--line);padding:40px 0 60px;color:var(--muted);f
 <script>
 // ---- Datos (editar acá) ----
 const CONFIG = {
-  // Número del local en formato internacional sin "+", ej: "59899123456".
-  // Vacío = WhatsApp deja elegir el contacto (modo demo).
-  whatsapp: "",
+  // Número del local en formato internacional sin "+" (el de Google Maps: 2624 0217).
+  // Si el local usa otro celular para WhatsApp, cambiarlo acá.
+  whatsapp: "59826240217",
+  tel: "+59826240217",
+  abre: 11, cierra: 24, // horario para reservas (cierra 24 = medianoche)
 };
 // Carta real (foto del local, 20/11/2026). Alérgenos inferidos de los ingredientes: confirmar con el local.
 const GUSTOS = ["Huevo","Jamón","Pepperoni","Cebolla caramelizada","Panceta","Cheddar","Aceituna","Morrón","Ananá"];
@@ -415,21 +461,65 @@ function fillHero(i){
   $("#hPrice").textContent = money(p.price);
   [...dots.children].forEach((d,k)=>d.classList.toggle("on",k===i));
 }
-async function go(i, dir){
+const stage = $("#stage"), pz = $("#pizza");
+const txtEls = () => [...document.querySelectorAll(".hero-text > *:not(.ctrl)")];
+const BOUNCE = [.34,1.56,.64,1];
+// La pizza sale girando hacia el lado del gesto y la siguiente entra rodando desde el otro.
+async function go(i, dir, from={x:0,r:0,o:1}){
   if (busy || i===cur) return; busy = true;
   dir = dir || (i>cur?1:-1);
-  const pz = $("#pizza"), txt = [...document.querySelectorAll(".hero-text > *:not(.ctrl)")];
-  await Promise.all([anim(pz,{rotate:[0,-dir*120],scale:[1,.7],opacity:[1,0]},{duration:.35,ease:"easeIn"}), anim(txt,{opacity:[1,0],y:[0,-12]},{duration:.2})]);
+  const w = stage.offsetWidth;
+  await Promise.all([
+    anim(pz,{x:[from.x,-dir*w],rotate:[from.r,-dir*160],opacity:[from.o,0]},{duration:.3,ease:"easeIn"}),
+    anim(txtEls(),{opacity:[1,0],x:[0,-dir*28]},{duration:.2})]);
   cur = i; $("#spin").innerHTML = pizzaSVG(PIZZAS[i], i); fillHero(i);
-  await Promise.all([anim(pz,{rotate:[dir*120,0],scale:[.7,1],opacity:[0,1]},{duration:.7}), anim(txt,{opacity:[0,1],y:[16,0]},{duration:.5,delay:M?M.stagger(.05):0})]);
+  await Promise.all([
+    anim(pz,{x:[dir*w,0],rotate:[dir*160,0],opacity:[0,1]},{duration:.8,ease:[.3,1.25,.5,1]}),
+    anim(txtEls(),{opacity:[0,1],x:[dir*28,0]},{duration:.5,delay:M?M.stagger(.05):0})]);
   busy = false;
 }
 const step = d => go((cur+d+PIZZAS.length)%PIZZAS.length, d);
 $("#prev").onclick = ()=>step(-1); $("#next").onclick = ()=>step(1);
 document.addEventListener("keydown", e=>{ if(document.querySelector(".drawer.on")) return; if(e.key==="ArrowRight") step(1); if(e.key==="ArrowLeft") step(-1)});
-let sx=null; const stage=$("#stage");
-stage.addEventListener("pointerdown",e=>sx=e.clientX);
-stage.addEventListener("pointerup",e=>{ if(sx===null) return; const dx=e.clientX-sx; sx=null; if(Math.abs(dx)>40) step(dx<0?1:-1); else if(e.target.closest("#pizza")) openDetail(cur)});
+
+// Deslizar: la pizza sigue al dedo con tensión (cuesta más cuanto más lejos), gira mientras se arrastra
+// y al soltar pasa a la siguiente o vuelve a su lugar con rebote.
+let drag = null;
+const tension = dx => Math.sign(dx)*Math.pow(Math.abs(dx),.85);
+function dragStyle(x){
+  pz.style.transform = `translateX(${x}px) rotate(${x*.4}deg) scale(${1-Math.min(Math.abs(x)/1500,.08)})`;
+  pz.style.opacity = 1-Math.min(Math.abs(x)/(stage.offsetWidth*1.3),.6);
+  txtEls().forEach(t=>t.style.opacity = 1-Math.min(Math.abs(x)/220,.75));
+}
+stage.addEventListener("pointerdown",e=>{
+  if (busy || e.button>0) return;
+  drag = {x0:e.clientX, y0:e.clientY, t0:performance.now(), dx:0, lock:null, id:e.pointerId};
+});
+stage.addEventListener("pointermove",e=>{
+  if (!drag) return;
+  const dx = e.clientX-drag.x0, dy = e.clientY-drag.y0;
+  if (drag.lock===null && Math.hypot(dx,dy)>8){
+    drag.lock = Math.abs(dx)>Math.abs(dy) ? "x" : "y";
+    if (drag.lock==="x") stage.setPointerCapture(drag.id); else { drag=null; return }
+  }
+  if (drag.lock!=="x") return;
+  drag.dx = dx; dragStyle(tension(dx));
+});
+function endDrag(e){
+  if (!drag) return;
+  const d = drag; drag = null;
+  const dt = performance.now()-d.t0, x = tension(d.dx), v = Math.abs(d.dx)/dt, o = +pz.style.opacity || 1;
+  txtEls().forEach(t=>t.style.opacity="");
+  if (d.lock===null){ if (e.type==="pointerup" && dt<400) openDetail(cur); return }
+  if (Math.abs(d.dx)>stage.offsetWidth*.2 || v>.45){
+    const dir = d.dx<0 ? 1 : -1;
+    go((cur+dir+PIZZAS.length)%PIZZAS.length, dir, {x, r:x*.4, o});
+  } else {
+    anim(pz,{x:[x,0],rotate:[x*.4,0],scale:[1,1],opacity:[o,1]},{duration:.7,ease:BOUNCE});
+  }
+}
+stage.addEventListener("pointerup",endDrag);
+stage.addEventListener("pointercancel",endDrag);
 $("#pizza").addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();openDetail(cur)}});
 $("#hOpen").onclick = ()=>openDetail(cur);
 $("#spin").innerHTML = pizzaSVG(PIZZAS[0],0); fillHero(0);
@@ -443,13 +533,25 @@ function openDrawer(el){
   const k = isSheet()?"y":"x"; anim(el,{[k]:["100%","0%"]},{duration:.45});
   setTimeout(()=>el.querySelector("[data-close]").focus(),50);
 }
-function closeDrawer(instant){
-  if(!openEl) return; const el = openEl; openEl = null; scrim.classList.remove("on");
+function closeDrawer(instant, fromPx){
+  if(!openEl) return; const el = openEl; openEl = null; scrim.classList.remove("on"); scrim.style.opacity="";
   const k = isSheet()?"y":"x";
   if(instant){el.classList.remove("on");el.style.transform="";return}
-  Promise.resolve(anim(el,{[k]:["0%","100%"]},{duration:.3,ease:"easeIn"})).then(()=>{el.classList.remove("on")});
+  const kf = fromPx!=null ? {[k]:[fromPx, el.offsetHeight]} : {[k]:["0%","100%"]};
+  Promise.resolve(anim(el,kf,{duration:.3,ease:"easeIn"})).then(()=>{el.classList.remove("on")});
   lastFocus && lastFocus.focus();
 }
+// En celular, los paneles se cierran deslizándolos hacia abajo desde la barra superior.
+document.querySelectorAll(".drawer .d-head").forEach(h=>{
+  let y0 = null; const el = h.parentElement;
+  h.addEventListener("pointerdown",e=>{ if(!isSheet() || e.target.closest("button")) return; y0=e.clientY; h.setPointerCapture(e.pointerId)});
+  h.addEventListener("pointermove",e=>{ if(y0===null) return; const dy=Math.max(0,e.clientY-y0);
+    el.style.transform=`translateY(${dy}px)`; scrim.style.opacity = 1-Math.min(dy/400,1)});
+  const end = e=>{ if(y0===null) return; const dy=Math.max(0,e.clientY-y0); y0=null;
+    if(dy>90) closeDrawer(false, dy);
+    else { scrim.style.opacity=""; anim(el,{y:[dy,0]},{duration:.45,ease:BOUNCE}) } };
+  h.addEventListener("pointerup",end); h.addEventListener("pointercancel",end);
+});
 scrim.onclick = ()=>closeDrawer();
 document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>closeDrawer());
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeDrawer()});
@@ -492,8 +594,7 @@ $("#dAdd").onclick=()=>{
 const cart = [];
 function addToCart(name, price, qty=1){
   const ex = cart.find(c=>c.name===name); ex ? ex.qty+=qty : cart.push({name,price,qty});
-  const n = cart.reduce((a,c)=>a+c.qty,0), b=$("#badge"); b.textContent=n; b.dataset.n=n;
-  anim(b,{scale:[1.6,1]},{duration:.4});
+  setBadge();
   toast(`${qty>1?qty+" × ":""}${name} agregado al pedido`);
 }
 function renderCart(){
@@ -501,11 +602,19 @@ function renderCart(){
   $("#cFoot").style.display = cart.length?"":"none";
   body.innerHTML = cart.length ? cart.map((c,k)=>`<div class="line"><div>${c.qty} × ${c.name}<small>${money(c.price)} c/u</small><button class="rm" data-k="${k}">Quitar</button></div><b>${money(c.price*c.qty)}</b></div>`).join("")
     : `<p class="empty">Todavía no agregaste nada.<br>Tocá una pizza para empezar.</p>`;
-  body.querySelectorAll(".rm").forEach(b=>b.onclick=()=>{cart.splice(+b.dataset.k,1);const n=cart.reduce((a,c)=>a+c.qty,0);$("#badge").textContent=n;$("#badge").dataset.n=n;renderCart()});
+  body.querySelectorAll(".rm").forEach(b=>b.onclick=()=>{cart.splice(+b.dataset.k,1);setBadge();renderCart()});
   $("#cTotal").textContent = money(total);
 }
-$("#openCart").onclick=()=>{renderCart();openDrawer($("#cart"))};
-function wa(text){window.open(`https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(text)}`,"_blank","noopener")}
+function setBadge(){
+  const n = cart.reduce((a,c)=>a+c.qty,0);
+  document.querySelectorAll(".badge").forEach(b=>{b.textContent=n;b.dataset.n=n;anim(b,{scale:[1.6,1]},{duration:.4})});
+}
+$("#openCart").onclick = $("#mCart").onclick = ()=>{renderCart();openDrawer($("#cart"))};
+function wa(text){
+  const url = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(text)}`;
+  // En celular abre la app de WhatsApp directo; en computadora, una pestaña nueva.
+  if (matchMedia("(pointer:coarse)").matches) location.href = url; else window.open(url,"_blank","noopener");
+}
 $("#cSend").onclick=()=>{
   const total=cart.reduce((a,c)=>a+c.price*c.qty,0);
   wa(`Hola Six Seven! Quiero pedir:\n${cart.map(c=>`• ${c.qty} × ${c.name}`).join("\n")}\nTotal: ${money(total)}`);
@@ -527,11 +636,29 @@ showCat("Pizzetas");
 
 // ---- Reservas ----
 const f=$("#resForm");
-f.dia.min = new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10); f.dia.value=f.dia.min;
-for(let h=11;h<=23;h++) for(const m of ["00","30"]) f.hora.add(new Option(`${h}:${m}`)); f.hora.value="21:00";
-for(let n=1;n<=12;n++) f.pers.add(new Option(n+(n===1?" persona":" personas"),n)); f.pers.value=2;
-f.onsubmit=e=>{e.preventDefault();const d=new Date(f.dia.value+"T12:00").toLocaleDateString("es-UY",{weekday:"long",day:"numeric",month:"long"});
-  wa(`Hola Six Seven! Quisiera reservar mesa para ${f.pers.value} el ${d} a las ${f.hora.value}. A nombre de ${f.nombre.value}.`)};
+const hoy = () => { const d=new Date(); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}` };
+f.dia.min = hoy(); f.dia.value = hoy();
+// Arma los horarios cada 30 min; si el día es hoy, saca los que ya pasaron (con 30 min de margen).
+function fillHoras(){
+  const prev = f.hora.value, now = new Date(), esHoy = f.dia.value===hoy();
+  const desde = esHoy ? now.getHours()*60+now.getMinutes()+30 : 0;
+  f.hora.innerHTML = "";
+  for(let t=CONFIG.abre*60; t<CONFIG.cierra*60; t+=30) if(t>=desde) f.hora.add(new Option(`${pad(Math.floor(t/60))}:${pad(t%60)}`));
+  if(!f.hora.options.length) f.hora.add(new Option("Sin horarios hoy",""));
+  f.hora.value = [...f.hora.options].some(o=>o.value===prev) ? prev : ([...f.hora.options].find(o=>o.value>="21:00")||f.hora.options[0]).value;
+}
+fillHoras(); f.dia.onchange = fillHoras;
+for(let n=1;n<=12;n++) f.pers.add(new Option(n+(n===1?" persona":" personas"),n)); f.pers.add(new Option("Más de 12","más de 12")); f.pers.value=2;
+f.onsubmit = e=>{
+  e.preventDefault(); fillHoras();
+  const nombre = f.nombre.value.trim();
+  if(!f.dia.value || f.dia.value<hoy()) return toast("Elegí un día de hoy en adelante");
+  if(!f.hora.value) return toast("Hoy ya no quedan horarios, probá otro día");
+  if(nombre.length<2) { f.nombre.focus(); return toast("Poné tu nombre para la reserva") }
+  const d = new Date(f.dia.value+"T12:00").toLocaleDateString("es-UY",{weekday:"long",day:"numeric",month:"long"});
+  const p = f.pers.value==="1" ? "1 persona" : `${f.pers.value} personas`;
+  wa(`Hola Six Seven! Quisiera reservar una mesa:\n• Día: ${d}\n• Hora: ${f.hora.value}\n• Personas: ${p}\n• Nombre: ${nombre}\n¿Me confirman? Gracias!`);
+};
 
 // ---- Toast ----
 let tt; function toast(msg){const t=$("#toast");t.textContent=msg;clearTimeout(tt);anim(t,{opacity:[0,1],y:[20,0]},{duration:.35});tt=setTimeout(()=>anim(t,{opacity:[1,0]},{duration:.3}),2200)}
