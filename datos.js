@@ -8,7 +8,7 @@ window.DATOS = {
   rubro: "Pizzería",
   barrio: "Buceo",
   logo: "67",                       // texto dentro del círculo del logo
-  demo: "Demo · las pizzas son ilustraciones", // "" para la versión final (también la muestra en Google)
+  demo: "Demo · fotos ilustrativas",// "" para la versión final (también la muestra en Google)
 
   colores: {
     brand: "#e63b2e",   // botones y acentos
@@ -138,3 +138,26 @@ window.DATOS = {
   // ---------- Pie ----------
   cierre: ["¿Mesa para", "esta noche?"],
 };
+
+// ---------- Fotos ----------
+// Ilustrativas (Unsplash, licencia libre). Cuando el local tenga sus fotos,
+// poné la URL o el archivo (ej. "fotos/clasica.jpg") en vez del código.
+(function(){
+  const U = (id, w=900) => id.startsWith("photo-") ? `https://images.unsplash.com/${id}?w=${w}&q=75&auto=format&fit=crop` : id;
+  const F = {
+    "Clásica":"photo-1785065316016-ff23cea187b1", "Hawaiana":"photo-1562835155-a7c2a225e97d", "Siciliana":"photo-1700760934249-93efbb574d23",
+    "Americana":"photo-1593272280654-b56e97e002e4", "Canadiense":"photo-1655673654158-9f7285b7d1ea", "Six Seven":"photo-1565299624946-b28f40a0ae38",
+    "Milanesa c/fritas":"photo-1599921841143-819065a55cc6", "Mila a caballo":"photo-1599921841143-819065a55cc6", "Mila napolitana":"photo-1560611588-163f295eb145",
+    "Mila americana":"photo-1560611588-163f295eb145", "Mila en 2 panes":"photo-1667451417729-73e944a796a9", "Mila en 2 panes completa":"photo-1667451417729-73e944a796a9",
+    "Mega a caballo":"photo-1585325701956-60dd9c8553bc", "Mega napolitana":"photo-1585325701956-60dd9c8553bc", "Mega americana":"photo-1667451417729-73e944a796a9", "Mega Six Seven":"photo-1667451417729-73e944a796a9",
+    "Pizza":"photo-1628840042765-356cda07504e", "Muzza":"photo-1785065316016-ff23cea187b1",
+    "Capeletis":"photo-1628885363743-fbf9c98d4196", "Sorrentinos":"photo-1778850620699-79ba3ff60bf0", "Raviolones":"photo-1594610352113-ad218529cfb7", "Ravioles":"photo-1762088875241-e6d23e93dc0f", "Tallarines":"photo-1665761543682-6305ccc5398b",
+    "Pancho al pan":"photo-1638368593249-7cadb261e8b3", "Pancho c/muzza":"photo-1599599810694-b5b37304c041",
+    "Fritas":"photo-1630384060421-cb20d0e0649d", "Fritas salseadas":"photo-1688978181542-87a886a16fbe", "Cerveza":"photo-1608270586620-248524c67de9",
+  };
+  const D = window.DATOS;
+  D.carta.forEach(c => c.items.forEach(it => { if (!it.foto && F[it.n]) it.foto = U(F[it.n], 700); }));
+  D.portada.foto = D.portada.foto || U("photo-1621538997517-58ce53933faa", 1800);       // horno
+  D.local.tarjetas[0].foto = D.local.tarjetas[0].foto || U("photo-1767713362918-d6db856570ba"); // frente de pizzería
+  D.local.tarjetas[1].foto = D.local.tarjetas[1].foto || U("photo-1644917777632-04f68ce502dd"); // mostrador
+})();

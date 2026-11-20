@@ -350,6 +350,9 @@ form.f{margin-top:1.75rem;display:grid;gap:1rem}
 //  Plantilla gastronomía. Todo el contenido sale de datos.js.
 // =====================================================================
 const D = window.DATOS, C = D.contacto;
+// tipo "pedidos" (gastronomía: carrito por WhatsApp) o "turnos" (servicios: reservar turno por WhatsApp)
+const TURNOS = D.tipo === "turnos";
+const TX = Object.assign({ carta:"La carta", local:"El local", destacadas:"Destacadas", reservar:"Reservar", reservarLargo:"Reservar mesa", reservas:"Reservas", accion:"Pedir" }, D.textos || {});
 const $ = (s, r=document) => r.querySelector(s), $$ = (s, r=document) => [...r.querySelectorAll(s)];
 const money = n => n==null ? "Consultar" : "$ " + n.toLocaleString("es-UY");
 const pad = n => String(n).padStart(2, "0");
@@ -470,10 +473,10 @@ ${D.demo ? `<div class="demo">${D.demo}</div>` : ""}
     ${P.foto ? `<img src="${P.foto}" alt="" fetchpriority="high">` : `<div class="art"></div><div class="bigpizza"><div class="spin" style="animation-duration:90s">${pizzaSVG((findItem(S[0]?.plato)||ITEMS.find(i=>i.pizza)||{}).pizza||{top:{oregano:30}}, 99)}</div></div>`}
   </div></div>
   <header class="site">
-    <nav class="hnav" aria-label="Secciones"><a href="#carta" data-go>La carta</a><a href="#local" data-go>El local</a></nav>
+    <nav class="hnav" aria-label="Secciones"><a href="#carta" data-go>${TX.carta}</a><a href="#local" data-go>${TX.local}</a></nav>
     <div class="hcenter"><a href="#top" data-go class="brandmark">${logo}${D.nombre}</a></div>
     <div class="hright">
-      ${F.reservas ? `<button class="hbook" data-open="reserva">Reservar</button>` : ""}
+      ${F.reservas ? `<button class="hbook" data-open="reserva">${TX.reservar}</button>` : ""}
       <button class="burger" id="burger" aria-label="Abrir menú"><i></i><i></i></button>
     </div>
   </header>
@@ -518,7 +521,7 @@ ${S?.length ? `<section class="trust px" id="destacadas">
 </section>` : ""}
 
 <section class="carta px" id="carta">
-  <span class="eyebrow">La carta</span>
+  <span class="eyebrow">${TX.carta}</span>
   ${lines(D.cartaTitulo, "h2")}
   <div class="tabs" role="tablist" id="tabs"></div>
   <ul class="rows" id="rows"></ul>
@@ -554,8 +557,8 @@ ${D.resenas?.length ? `<section class="testi px" id="resenas">
 
 <footer class="px" id="contacto">
   <div class="fcta">
-    <div><span class="eyebrow light">${F.reservas ? "Reservas" : "Contacto"}</span>${lines(D.cierre, "big", "p")}</div>
-    <div data-in="o:0,y:20" data-dl="150" data-k="200,24">${F.reservas ? pill("Reservar mesa","light",'data-open="reserva"') : `<a class="pill light" href="tel:${C.tel}">Llamar</a>`}</div>
+    <div><span class="eyebrow light">${F.reservas ? TX.reservas : "Contacto"}</span>${lines(D.cierre, "big", "p")}</div>
+    <div data-in="o:0,y:20" data-dl="150" data-k="200,24">${F.reservas ? pill(TX.reservarLargo,"light",'data-open="reserva"') : `<a class="pill light" href="tel:${C.tel}">Llamar</a>`}</div>
   </div>
   <div class="fcols">
     <div><a href="#top" data-go class="brandmark" style="font-size:1.125rem">${logo}${D.nombre}</a>
@@ -563,7 +566,7 @@ ${D.resenas?.length ? `<section class="testi px" id="resenas">
     <div><h4>Dónde</h4><ul><li>${C.direccion}</li><li><a href="${C.mapa}" target="_blank" rel="noopener">Cómo llegar</a></li></ul></div>
     <div><h4>Contacto</h4><ul><li><a href="tel:${C.tel}">${C.telefono}</a></li><li><a href="https://wa.me/${C.whatsapp}" target="_blank" rel="noopener">WhatsApp</a></li>${C.instagram?`<li><a href="${C.instagram}" target="_blank" rel="noopener">Instagram</a></li>`:""}</ul></div>
   </div>
-  <div class="fbar"><span>© ${new Date().getFullYear()} ${D.nombre}.</span><nav style="display:flex;gap:1.25rem"><a href="#carta" data-go>Carta</a><a href="#local" data-go>El local</a><a href="#top" data-go>Arriba</a></nav></div>
+  <div class="fbar"><span>© ${new Date().getFullYear()} ${D.nombre}.</span><nav style="display:flex;gap:1.25rem"><a href="#carta" data-go>${TX.carta}</a><a href="#local" data-go>${TX.local}</a><a href="#top" data-go>Arriba</a></nav></div>
 </footer>`;
 
 // Capas: menú, modales, barra de celular, aviso
@@ -573,23 +576,25 @@ $("#layers").innerHTML = `
   <div class="pn"><div class="in">
     <div class="top"><span class="brandmark">${logo}${D.nombre}</span><button class="xbtn dark" data-close data-hz aria-label="Cerrar menú"><span data-hov="r:90" data-hk="300,18">${XI}</span></button></div>
     <nav class="big">
-      ${[["La carta","#carta"],["Destacadas","#destacadas"],["El local","#local"],["Contacto","#contacto"]].filter(([,h])=>$(h)).map(([t,h])=>`<a href="${h}" data-go data-mi>${t}</a>`).join("")}
+      ${[[TX.carta,"#carta"],[TX.destacadas,"#destacadas"],[TX.local,"#local"],["Contacto","#contacto"]].filter(([,h])=>$(h)).map(([t,h])=>`<a href="${h}" data-go data-mi>${t}</a>`).join("")}
     </nav>
-    <div class="bot">${F.reservas ? pill("Reservar mesa","light",'data-open="reserva"') : ""}<a href="tel:${C.tel}" style="color:rgb(255 255 255/.7)">${C.telefono} · ${C.direccion}</a></div>
+    <div class="bot">${F.reservas ? pill(TX.reservarLargo,"light",'data-open="reserva"') : ""}<a href="tel:${C.tel}" style="color:rgb(255 255 255/.7)">${C.telefono} · ${C.direccion}</a></div>
   </div></div>
 </div>
 
 <div class="modal" id="m-reserva" inert role="dialog" aria-modal="true" aria-labelledby="rTitle">
   <div class="bk" data-close></div>
   <div class="pn" data-lenis-prevent>
-    <div class="mh"><div><span class="eyebrow">Reservas</span>${lines(D.cierre,"h2","h2",'id="rTitle" data-stagger="90" data-dur="800"')}</div>
+    <div class="mh"><div><span class="eyebrow">${TX.reservas}</span>${lines(D.cierre,"h2","h2",'id="rTitle" data-stagger="90" data-dur="800"')}</div>
       <button class="xbtn" data-close data-hz aria-label="Cerrar"><span data-hov="r:90" data-hk="300,18">${XI}</span></button></div>
     <form class="f" id="rForm" novalidate>
+      ${TURNOS ? `<label class="fld"><span>Servicio</span><select name="serv">${D.carta.map(c=>`<optgroup label="${c.cat}">${c.items.map(it=>`<option>${it.n}</option>`).join("")}</optgroup>`).join("")}</select></label>
+      ${D.carrusel?.some(s=>s.nombre) ? `<label class="fld"><span>Con quién</span><select name="prof"><option value="">Me da igual</option>${D.carrusel.filter(s=>s.nombre).map(s=>`<option>${s.nombre}</option>`).join("")}</select></label>` : ""}` : ""}
       <div class="f2"><label class="fld"><span>Día</span><input type="date" name="dia" required></label>
       <label class="fld"><span>Hora</span><select name="hora" required></select></label></div>
-      <div class="f2"><label class="fld"><span>Personas</span><select name="pers"></select></label>
+      <div class="${TURNOS ? "" : "f2"}">${TURNOS ? "" : `<label class="fld"><span>Personas</span><select name="pers"></select></label>`}
       <label class="fld"><span>Nombre</span><input name="nombre" autocomplete="given-name" required maxlength="40" placeholder="Tu nombre"></label></div>
-      <div class="mfoot"><button class="pill solid" type="submit">Reservar por WhatsApp</button><a class="alt" href="tel:${C.tel}">o llamá al ${C.telefono}</a></div>
+      <div class="mfoot"><button class="pill solid" type="submit">${TX.reservar} por WhatsApp</button><a class="alt" href="tel:${C.tel}">o llamá al ${C.telefono}</a></div>
     </form>
     <div class="ok" id="rOk" hidden>
       <div class="chk"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></div>
@@ -625,9 +630,10 @@ $("#layers").innerHTML = `
 </div>
 
 <nav class="mbar" id="mbar" aria-label="Accesos rápidos">
-  <a href="#carta" data-go>Carta</a>
-  ${F.reservas ? `<button data-open="reserva">Reservar</button>` : `<a href="tel:${C.tel}">Llamar</a>`}
-  ${F.pedidos ? `<button class="go" data-open="pedido">Mi pedido <span class="badge" data-n="0">0</span></button>` : `<a class="go" href="#local" data-go>Cómo llegar</a>`}
+  <a href="#carta" data-go>${TX.carta.replace(/^La /,"")}</a>
+  ${F.pedidos ? (F.reservas ? `<button data-open="reserva">${TX.reservar}</button>` : `<a href="tel:${C.tel}">Llamar</a>`) : `<a href="tel:${C.tel}">Llamar</a>`}
+  ${F.pedidos ? `<button class="go" data-open="pedido">Mi pedido <span class="badge" data-n="0">0</span></button>`
+    : F.reservas ? `<button class="go" data-open="reserva">${TX.reservar}</button>` : `<a class="go" href="#local" data-go>Cómo llegar</a>`}
 </nav>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>`;
 
@@ -700,8 +706,8 @@ let ci = 0, collTimer = null;
 const COLL = (P.destacados||[]).map(findItem).filter(Boolean);
 function collFill(){
   const it = COLL[ci];
-  $("#collCard").innerHTML = `<div class="thumb">${visual(it)}</div><div><b>${it.cat}</b><span>${it.n}</span><u>${F.pedidos ? `Pedir · ${money(it.p)}` : money(it.p)} →</u></div>`;
-  $("#collCard").onclick = () => openDetalle(it);
+  $("#collCard").innerHTML = `<div class="thumb">${visual(it)}</div><div><b>${it.cat}</b><span>${it.n}</span><u>${F.pedidos||TURNOS ? `${TX.accion} · ${money(it.p)}` : money(it.p)} →</u></div>`;
+  $("#collCard").onclick = () => elegir(it);
   dots($("#collDots"), COLL.length, ci, i => { collGo(i); collAuto(); });
 }
 function collGo(i){
@@ -714,12 +720,13 @@ if (COLL.length && $("#collCard")) collFill();
 
 // ---------- Carrusel de palabras gigantes ----------
 let ti = 0;
+// Cada diapositiva muestra un plato/servicio de la carta (plato:"...") o una persona (nombre, rol, foto).
 function trustFill(first){
-  const s = S[ti], it = findItem(s.plato);
+  const s = S[ti], it = s.plato && findItem(s.plato);
   $$("#ghost .gw").forEach((w,i) => { w.dataset.text = s.palabras[i] || ""; split(w, "words", { dur:700 }); if (!first) refire(w); });
-  $("#coachName").textContent = it ? it.n : s.plato;
-  $("#coachRole").textContent = it ? `${it.cat} · ${money(it.p)}` : "";
-  $("#coachPh").innerHTML = visual(it, true);
+  $("#coachName").textContent = it ? it.n : (s.nombre || s.plato || "");
+  $("#coachRole").textContent = it ? `${it.cat} · ${money(it.p)}` : (s.rol || "");
+  $("#coachPh").innerHTML = it ? visual(it, true) : (s.foto ? `<img src="${s.foto}" alt="${s.nombre||""}" loading="lazy">` : "");
   if (!first){ setSp($("#coachPh"), {o:0}); sp($("#coachPh"), {o:1}, [260,26]); }
   dots($("#tDots"), S.length, ti, i => { ti = i; trustFill(); });
 }
@@ -728,7 +735,7 @@ if (S?.length){
   $$("#ghost .gw").forEach(w => { w.setAttribute("data-split","words"); io.observe(w); });
   $("#tPrev").onclick = () => { ti = (ti-1+S.length) % S.length; trustFill(); };
   $("#tNext").onclick = () => { ti = (ti+1) % S.length; trustFill(); };
-  const openCoach = () => { const it = findItem(S[ti].plato); it && openDetalle(it); };
+  const openCoach = () => { const s = S[ti], it = s.plato && findItem(s.plato); if (it) elegir(it); else if (TURNOS && F.reservas) openReserva({ prof:s.nombre }); };
   $("#coachFig").onclick = openCoach;
   $("#coachFig").onkeydown = e => { if (e.key==="Enter"||e.key===" "){ e.preventDefault(); openCoach(); } };
 }
@@ -743,7 +750,7 @@ function showCat(ci){
       ${it.pizza||it.foto ? `<span class="thumb rth">${visual(it)}</span>` : ""}
       <span class="t"><h3>${it.n}</h3>${it.d?`<p>${it.d}</p>`:""}</span>
       <span class="pr">${money(it.p)}</span>
-      ${F.pedidos && it.p!=null ? `<span class="c" data-hov="x:6,o:1" data-hov-from="x:0,o:.55" data-hk="300,20">${PLUS}</span>` : ""}
+      ${(F.pedidos||TURNOS) && it.p!=null ? `<span class="c" data-hov="x:6,o:1" data-hov-from="x:0,o:.55" data-hk="300,20">${PLUS}</span>` : ""}
     </button></li>`).join("");
   $$("#rows [data-in]").forEach(el => { setSp(el, parse(el.dataset.in)); io.observe(el); });
   $$("#rows [data-hov]").forEach(el => {
@@ -752,8 +759,10 @@ function showCat(ci){
     zone.addEventListener("pointerenter", () => { if (!isMobile()) sp(el, to, [300,20]); });
     zone.addEventListener("pointerleave", () => sp(el, from, [300,20]));
   });
-  $$("#rows .row").forEach(b => b.onclick = () => { const it = cat.items.find(x=>x.n===b.dataset.n); if (it.p!=null) openDetalle({...it, cat:cat.cat}); });
+  $$("#rows .row").forEach(b => b.onclick = () => { const it = cat.items.find(x=>x.n===b.dataset.n); if (it.p!=null) elegir({...it, cat:cat.cat}); });
 }
+// Tocar un plato abre el detalle para pedir; tocar un servicio abre la reserva de turno con ese servicio.
+function elegir(it){ TURNOS ? (F.reservas && openReserva({ serv:it.n })) : openDetalle(it); }
 $("#tabs").innerHTML = D.carta.map((c,i) => `<button class="tab" role="tab">${c.cat}</button>`).join("");
 $$("#tabs .tab").forEach((t,i) => t.onclick = () => showCat(i));
 showCat(0);
@@ -875,10 +884,14 @@ function fillHoras(){
   f.hora.value = opts.some(o=>o.value===prev) ? prev : (opts.find(o=>o.value>="21:00") || opts[0]).value;
 }
 fillHoras(); f.dia.onchange = fillHoras;
-for (let n=1; n<=12; n++) f.pers.add(new Option(n + (n===1?" persona":" personas"), n));
-f.pers.add(new Option("Más de 12", "más de 12")); f.pers.value = 2;
-function openReserva(){
+if (f.pers){
+  for (let n=1; n<=12; n++) f.pers.add(new Option(n + (n===1?" persona":" personas"), n));
+  f.pers.add(new Option("Más de 12", "más de 12")); f.pers.value = 2;
+}
+function openReserva(pref={}){
   f.hidden = false; $("#rOk").hidden = true; fillHoras();
+  if (pref.serv && f.serv) f.serv.value = pref.serv;
+  if (pref.prof && f.prof) f.prof.value = pref.prof;
   openModal("reserva"); setTimeout(() => f.nombre.focus({preventScroll:true}), 120);
 }
 f.onsubmit = e => {
@@ -888,10 +901,15 @@ f.onsubmit = e => {
   if (!f.hora.value) return toast("Hoy ya no quedan horarios, probá otro día");
   if (nombre.length < 2){ f.nombre.focus(); return toast("Poné tu nombre para la reserva"); }
   const d = new Date(f.dia.value+"T12:00").toLocaleDateString("es-UY",{weekday:"long",day:"numeric",month:"long"});
-  const p = f.pers.value==="1" ? "1 persona" : `${f.pers.value} personas`;
-  wa(`Hola ${D.nombre}! Quisiera reservar una mesa:\n• Día: ${d}\n• Hora: ${f.hora.value}\n• Personas: ${p}\n• Nombre: ${nombre}\n¿Me confirman? Gracias!`);
+  if (TURNOS){
+    const prof = f.prof && f.prof.value ? `\n• Con: ${f.prof.value}` : "";
+    wa(`Hola ${D.nombre}! Quisiera reservar un turno:\n• Servicio: ${f.serv.value}${prof}\n• Día: ${d}\n• Hora: ${f.hora.value}\n• Nombre: ${nombre}\n¿Me confirman? Gracias!`);
+  } else {
+    const p = f.pers.value==="1" ? "1 persona" : `${f.pers.value} personas`;
+    wa(`Hola ${D.nombre}! Quisiera reservar una mesa:\n• Día: ${d}\n• Hora: ${f.hora.value}\n• Personas: ${p}\n• Nombre: ${nombre}\n¿Me confirman? Gracias!`);
+  }
   f.hidden = true; $("#rOk").hidden = false;
-  $("#rOkTxt").textContent = `Gracias, ${nombre}. Mandá el mensaje en WhatsApp y el local te confirma la reserva.`;
+  $("#rOkTxt").textContent = `Gracias, ${nombre}. Mandá el mensaje en WhatsApp y te confirmamos ${TURNOS ? "el turno" : "la reserva"}.`;
 };
 
 // ---------- Pantalla de carga ----------
