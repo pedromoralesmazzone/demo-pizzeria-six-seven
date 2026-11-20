@@ -96,9 +96,10 @@ section{padding:88px 0;border-top:1px solid var(--line);scroll-margin-top:64px}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:36px}
 .stat b{display:block;font:900 44px/1 var(--display)}
 .stat span{font-size:13px;color:var(--muted)}
-.ember{position:relative;aspect-ratio:1;max-width:380px;width:100%;justify-self:center;border-radius:50%;
-  background:radial-gradient(circle at 50% 60%,#ffb347 0,#ff5a1f 18%,#b0200f 38%,rgba(80,10,5,.35) 58%,transparent 70%);filter:blur(2px)}
-@media (max-width:760px){.horno{grid-template-columns:1fr}.ember{order:-1;max-width:240px}}
+.casa-pizza{position:relative;display:block;aspect-ratio:1;max-width:400px;width:100%;justify-self:center;margin-bottom:28px}
+.casa-pizza .spin{animation-duration:40s}
+.casa-cap{position:absolute;left:50%;bottom:-28px;transform:translateX(-50%);white-space:nowrap}
+@media (max-width:760px){.horno{grid-template-columns:1fr}.casa-pizza{order:-1;max-width:min(260px,70vw)}}
 
 .tabs{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap}
 .tab{padding:10px 16px;border-radius:999px;border:1px solid var(--line);font-size:14px;color:var(--muted)}
@@ -263,7 +264,11 @@ form .alt{grid-column:1/-1;margin-top:0}
           <div class="stat reveal"><b data-count="11" data-suffix=":00">0</b><span>abrimos</span></div>
         </div>
       </div>
-      <div class="ember" id="ember" aria-hidden="true"></div>
+      <button class="casa-pizza reveal" id="casaPizza" aria-label="Ver la pizzeta Six Seven">
+        <div class="board"></div>
+        <div class="pizza"><div class="spin" id="casaSpin"></div></div>
+        <span class="mono casa-cap">La Six Seven · elegí tus 4 gustos</span>
+      </button>
     </div>
   </section>
 
@@ -634,6 +639,11 @@ function showCat(c){
 }
 showCat("Pizzetas");
 
+// ---- La casa: la pizzeta Six Seven girando ----
+const SIX = PIZZAS.findIndex(p=>p.name==="Six Seven");
+$("#casaSpin").innerHTML = pizzaSVG(PIZZAS[SIX], SIX);
+$("#casaPizza").onclick = ()=>openDetail(SIX);
+
 // ---- Reservas ----
 const f=$("#resForm");
 const hoy = () => { const d=new Date(); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}` };
@@ -671,7 +681,6 @@ if (M){
     targetOf(a).querySelectorAll("[data-count]").forEach(el=>{const to=+el.dataset.count,dec=+(el.dataset.dec||0),suf=el.dataset.suffix||"";
       M.animate(0,to,{duration:1.4,ease:EASE,onUpdate:v=>el.textContent=v.toFixed(dec)+suf})});
   }, {amount:.4});
-  M.animate("#ember",{scale:[1,1.08,1],opacity:[.85,1,.85]},{duration:3,repeat:Infinity,ease:"easeInOut"});
 } else document.querySelectorAll("[data-count]").forEach(el=>el.textContent=el.dataset.count+(el.dataset.suffix||""));
 </script>
 </body>
